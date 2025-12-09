@@ -8,6 +8,46 @@ void skip_space(Tokenizer *tk)
         advance(tk);
 }
 
+void skip_comment(Tokenizer *tk)
+{
+    advance(tk); // skip /
+    if (peek(tk) == '*')
+    {
+        while (peek(tk) != '\0')
+        {
+            if (peek(tk) == '*')
+            {
+                advance(tk);
+                if (peek(tk) == '/')
+                    break;
+            }
+            else
+                advance(tk);
+        }
+    }
+    else
+    {
+        while (peek(tk) != '\n')
+            advance('tk');
+    }
+}
+
+Token tokenize_preprocessor(Tokenizer *tk)
+{
+    Token t = make_token(tk, T_PREPROCESS, 0);
+    int connect_next_line = 0;
+    while (peek(tk) != '\0')
+    {
+        if (peek(tk) == '\\')
+            connect_next_line = 1;
+        if (peek(tk) == '\n' && (!connect_next_line))
+            break;
+        advance(tk);
+    }
+    t.length = tk->src + tk->pos - t.start;
+    return t;
+}
+
 Token tokenize_eof(Tokenizer *tk)
 {
     Token t = make_token(tk, T_EOF, 1);
