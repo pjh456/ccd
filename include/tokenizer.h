@@ -1,6 +1,6 @@
 #pragma once
 
-#include "token.h"
+#include "tokenizer_impl/token.h"
 #include <stdint.h>
 
 typedef struct Status

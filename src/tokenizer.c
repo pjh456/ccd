@@ -1,8 +1,9 @@
 #define ENABLE_DEBUG
 
 #include "tokenizer.h"
-#include "tokenizer_impl.h"
+#include "tokenizer_impl/tokenizer_impl.h"
 #include "utils.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
