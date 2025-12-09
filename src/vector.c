@@ -49,13 +49,6 @@ int vector_push_back(Vector *vec, void *elem)
     return 1;
 }
 
-void *vector_get(Vector *vec, size_t idx)
-{
-    if (idx > vec->size)
-        return NULL;
-    return (char *)vec->data + idx * vec->ele_size;
-}
-
 int vector_pop_back(Vector *vec)
 {
     if (vec->size == 0)
@@ -63,3 +56,14 @@ int vector_pop_back(Vector *vec)
     vec->size--;
     return 1;
 }
+
+void *vector_get(Vector *vec, size_t idx)
+{
+    if (idx > vec->size)
+        return NULL;
+    return (char *)vec->data + idx * vec->ele_size;
+}
+
+void *vector_front(Vector *vec) { return vector_get(vec, 0); }
+
+void *vector_back(Vector *vec) { return vector_get(vec, vec->size - 1); }
