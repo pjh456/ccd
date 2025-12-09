@@ -75,8 +75,10 @@ Token tokenize_keyword(Tokenizer *tk)
         }
     }
 
-    advance(tk);
+    while (is_alnum(peek(tk)))
+        advance(tk);
     t.type = T_IDENTIFIER;
+    t.length = tk->src + tk->pos - t.start;
     return t;
 }
 
