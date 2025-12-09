@@ -28,7 +28,7 @@ void skip_comment(Tokenizer *tk)
     else
     {
         while (peek(tk) != '\n')
-            advance('tk');
+            advance(tk);
     }
 }
 
