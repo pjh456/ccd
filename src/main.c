@@ -59,6 +59,7 @@ int main(int argc, char **argv)
             break;
     }
 
+    tokenizer_free(tk);
     free(src);
     return 0;
 }
