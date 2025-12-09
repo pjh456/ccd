@@ -1,3 +1,5 @@
+#pragma once
+
 #include <tokenizer.h>
 #include <ctype.h>
 
@@ -7,10 +9,10 @@
         block       \
     } while (0)
 
-int is_alpha(unsigned char ch) { return isalpha(ch) || ch == '_'; }
-int is_digit(unsigned char ch) { return ch >= '0' && ch <= '9'; }
-int is_alnum(unsigned char ch) { return is_alpha(ch) || is_digit(ch); }
-int is_space(unsigned char ch) { return ch == ' ' || ch == '\t' || ch == '\n' || ch == 'r'; }
+int is_alpha(unsigned char ch);
+int is_digit(unsigned char ch);
+int is_alnum(unsigned char ch);
+int is_space(unsigned char ch);
 
 #ifdef ENABLE_DEBUG
 #define DEBUG(...) fprintf(stderr, __VA_ARGS__)

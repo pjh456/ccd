@@ -1,6 +1,7 @@
 #define ENABLE_DEBUG
 
 #include "tokenizer.h"
+#include "tokenizer_impl.h"
 #include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,8 +10,12 @@
 #define SRC(T) ((T)->src)
 #define POS(T) ((T)->pos)
 #define LEN(T) ((T)->len)
+#define STATUS(T) ((T)->stus)
 #define CUR(T) (SRC(T) + POS(T))
 #define CUR_CHAR(T) ((unsigned char)(*CUR(T)))
+#define LINE(T) (STATUS(T).line)
+#define COLUMN(T) (STATUS(T).col)
+#define TOKENIZE_STATUS(T) (STATUS(T).stus)
 
 #define KEYWORD(T, pos, tt, str)                 \
     if (strncmp(pos, str, sizeof(str) - 1) == 0) \
@@ -25,9 +30,8 @@
 Tokenizer *tokenizer_new(const char *src)
 {
     Tokenizer *tk = malloc(sizeof(*tk));
-    SRC(tk) = src;
-    POS(tk) = 0;
-    LEN(tk) = strlen(src);
+    SRC(tk) = src, POS(tk) = 0, LEN(tk) = strlen(src);
+    LINE(tk) = COLUMN(tk) = 1;
     return tk;
 }
 
@@ -43,43 +47,62 @@ char peek(Tokenizer *tk)
 
 char advance(Tokenizer *tk)
 {
+    if (peek(tk) == '\n')
+        tk->stus.line++, tk->stus.col = 1;
+    else
+        tk->stus.col++;
+
     if (POS(tk) < LEN(tk))
         return SRC(tk)[POS(tk)++];
     return '\0';
 }
 
-Token tokenizer_next(Tokenizer *tk)
+Token next(Tokenizer *tk)
 {
-    EAT_WHILE(tk, is_space);
-    const char *start = CUR(tk);
+    skip_space(tk);
     char ch = peek(tk);
-
     if (ch == '\0')
+        return tokenize_eof(tk);
+    else if (is_alpha(ch))
+        return tokenize_identifier(tk);
+    else if (is_digit(ch))
+        return tokenize_number(tk);
+
+    switch (ch)
     {
-        advance(tk);
-        return make_token(T_EOF, start, 0);
+    case '\'':
+        return tokenize_char(tk);
+    case '\"':
+        return tokenize_string(tk);
+    case '#':
+        return tokenize_preprocessor(tk);
+    case '<':
+    case '>':
+    case '=':
+    case '(':
+    case ')':
+    case '[':
+    case ']':
+    case '{':
+    case '}':
+    case '!':
+    case '&':
+    case '|':
+    case '^':
+    case '~':
+    case '+':
+    case '-':
+    case '*':
+    case '/':
+    case '%':
+    case '\\':
+    case '?':
+    case ',':
+    case '.':
+    case ':':
+    case ';':
+        return tokenize_operator(tk);
+    default:
+        return tokenize_unknown(tk);
     }
-
-    if (is_alpha(ch))
-    {
-        advance(tk);
-        EAT_WHILE(tk, is_alnum);
-        return make_token(T_ID, start, CUR(tk) - start);
-    }
-
-    if (is_digit(ch))
-    {
-        advance(tk);
-        EAT_WHILE(tk, is_digit);
-        return make_token(T_NUM, start, CUR(tk) - start);
-    }
-
-    KEYWORD(tk, start, T_PLUS, "+");
-    KEYWORD(tk, start, T_MINUS, "-");
-    KEYWORD(tk, start, T_STAR, "*");
-    KEYWORD(tk, start, T_ID, "/");
-
-    DEBUG("Unexpected character '%c' at %d:%d\n", CUR_CHAR(tk), 0, 0);
-    advance(tk);
-    return make_token(T_UNKNOWN, start, 0);
 }
