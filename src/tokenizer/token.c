@@ -10,8 +10,8 @@ const char *token_name(TokenType tt)
         return "IDENTIFIER";
     case T_NUMBER:
         return "NUMBER";
-    case T_CHAR:
-        return "CHAR";
+    case T_CHARACTER:
+        return "CHARACTER";
     case T_STRING:
         return "STRING";
 
@@ -116,6 +116,78 @@ const char *token_name(TokenType tt)
         return "ARROW";
     case T_QUESTION:
         return "QUESTION";
+
+    case T_EXTERN:
+        return "EXTERN";
+    case T_STATIC:
+        return "STATIC";
+    case T_INLINE:
+        return "INLINE";
+    case T_REGISTER:
+        return "REGISTER";
+    case T_RESTRICT:
+        return "RESTRICT";
+    case T_VOLATILE:
+        return "VOLATILE";
+    case T_CONST:
+        return "CONST";
+
+    case T_AUTO:
+        return "AUTO";
+    case T_VOID:
+        return "VOID";
+    case T_SIGNED:
+        return "SIGNED";
+    case T_UNSIGNED:
+        return "UNSIGNED";
+    case T_CHAR:
+        return "CHAR";
+    case T_SHORT:
+        return "SHORT";
+    case T_INT:
+        return "INT";
+    case T_LONG:
+        return "LONG";
+    case T_FLOAT:
+        return "FLOAT";
+    case T_DOUBLE:
+        return "DOUBLE";
+
+    case T_DO:
+        return "DO";
+    case T_WHILE:
+        return "WHILE";
+    case T_FOR:
+        return "FOR";
+    case T_CONTINUE:
+        return "CONTINUE";
+    case T_BREAK:
+        return "BREAK";
+    case T_IF:
+        return "IF";
+    case T_ELSE:
+        return "ELSE";
+    case T_SWITCH:
+        return "SWITCH";
+    case T_CASE:
+        return "CASE";
+    case T_DEFAULT:
+        return "DEFAULT";
+    case T_RETURN:
+        return "RETURN";
+    case T_GOTO:
+        return "GOTO";
+
+    case T_ENUM:
+        return "ENUM";
+    case T_SIZEOF:
+        return "SIZEOF";
+    case T_STRUCT:
+        return "STRUCT";
+    case T_TYPEDEF:
+        return "TYPEDEF";
+    case T_UNION:
+        return "UNION";
 
     case T_EOF:
         return "EOF";

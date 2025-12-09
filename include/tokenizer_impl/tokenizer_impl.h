@@ -5,7 +5,7 @@
 typedef struct Tokenizer Tokenizer;
 
 void skip_space(Tokenizer *tk);
-Token tokenize_identifier(Tokenizer *tk);
+Token tokenize_keyword(Tokenizer *tk);
 Token tokenize_number(Tokenizer *tk);
 Token tokenize_char(Tokenizer *tk);
 Token tokenize_string(Tokenizer *tk);

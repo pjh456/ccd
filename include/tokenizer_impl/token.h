@@ -8,7 +8,7 @@ typedef enum
 {
     T_IDENTIFIER, // x_a
     T_NUMBER,     // 123
-    T_CHAR,       // 'a'
+    T_CHARACTER,  // 'a'
     T_STRING,     // "xx"
 
     T_NOT,         // !
@@ -65,6 +65,44 @@ typedef enum
     T_DOT,       // .
     T_ARROW,     // ->
     T_QUESTION,  // ?
+
+    T_EXTERN,   // extern
+    T_STATIC,   // static
+    T_INLINE,   // inline
+    T_REGISTER, // register
+    T_RESTRICT, // restrict
+    T_VOLATILE, // volalite
+    T_CONST,    // const
+
+    T_AUTO,     // auto
+    T_VOID,     // void
+    T_SIGNED,   // signed
+    T_UNSIGNED, // unsigned
+    T_CHAR,     // char
+    T_SHORT,    // short
+    T_INT,      // int
+    T_LONG,     // long
+    T_FLOAT,    // float
+    T_DOUBLE,   // double
+
+    T_DO,       // do
+    T_WHILE,    // while
+    T_FOR,      // for
+    T_CONTINUE, // continue
+    T_BREAK,    // break
+    T_IF,       // if
+    T_ELSE,     // else
+    T_SWITCH,   // switch
+    T_CASE,     // case
+    T_DEFAULT,  // default
+    T_RETURN,   // return
+    T_GOTO,     // goto
+
+    T_ENUM,    // enum
+    T_SIZEOF,  // sizeof
+    T_STRUCT,  // struct
+    T_TYPEDEF, // typedef
+    T_UNION,   // union
 
     T_EOF,    // EOF
     T_UNKNOWN // Unknown

@@ -65,7 +65,7 @@ Token next(Tokenizer *tk)
     if (ch == '\0')
         return tokenize_eof(tk);
     else if (is_alpha(ch))
-        return tokenize_identifier(tk);
+        return tokenize_keyword(tk);
     else if (is_digit(ch))
         return tokenize_number(tk);
 
