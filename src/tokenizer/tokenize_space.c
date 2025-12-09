@@ -40,8 +40,13 @@ Token tokenize_preprocessor(Tokenizer *tk)
     {
         if (peek(tk) == '\\')
             connect_next_line = 1;
-        if (peek(tk) == '\n' && (!connect_next_line))
-            break;
+        if (peek(tk) == '\n')
+        {
+            if (connect_next_line)
+                connect_next_line = 0;
+            else
+                break;
+        }
         advance(tk);
     }
     t.length = tk->src + tk->pos - t.start;
