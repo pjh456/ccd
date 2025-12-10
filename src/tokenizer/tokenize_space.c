@@ -2,12 +2,17 @@
 #include "tokenizer_impl/tokenizer_impl.h"
 #include "utils.h"
 
+// 循环跳过空白符和注释，直到遇到有效代码字符
 void skip_space(Tokenizer *tk)
 {
     while (is_space(peek(tk)) || peek(tk) == '/')
     {
         if (peek(tk) == '/')
-            skip_comment(tk);
+        {
+            char ch = tk->src[tk->pos + 1];
+            if (ch == '/' || ch == '*')
+                skip_comment(tk); // 进入注释处理
+        }
         advance(tk);
     }
 }
