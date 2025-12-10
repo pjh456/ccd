@@ -87,7 +87,7 @@ const char *token_name(TokenType tt)
         return "DEC";
 
     case T_PREPROCESS:
-        return "PREPROCESS";
+        return "PREPROCESSOR";
     case T_BACKSLASH:
         return "BACKSLASH";
 

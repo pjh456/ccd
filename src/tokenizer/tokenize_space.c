@@ -1,6 +1,7 @@
 #include "tokenizer.h"
 #include "tokenizer_impl/tokenizer_impl.h"
 #include "utils.h"
+#include <stdio.h>
 
 // 循环跳过空白符和注释，直到遇到有效代码字符
 void skip_space(Tokenizer *tk)
@@ -9,7 +10,7 @@ void skip_space(Tokenizer *tk)
     {
         if (peek(tk) == '/')
         {
-            char ch = tk->src[tk->pos + 1];
+            char ch = (tk->pos + 1) < tk->len ? tk->src[tk->pos + 1] : '\0';
             if (ch == '/' || ch == '*')
                 skip_comment(tk); // 进入注释处理
         }
@@ -36,7 +37,7 @@ void skip_comment(Tokenizer *tk)
     }
     else
     {
-        while (peek(tk) != '\n')
+        while (peek(tk) != '\0' && peek(tk) != '\n')
             advance(tk);
     }
 }
@@ -44,23 +45,35 @@ void skip_comment(Tokenizer *tk)
 Token tokenize_preprocessor(Tokenizer *tk)
 {
     Token t = make_token(tk, T_PREPROCESS, 0);
-    int connect_next_line = 0; // 标记是否遇到行拼接符 '\'
+    advance(tk); // 跳过 '#'
 
-    // 预处理指令通常占据整行
+    int connect_next_line = 0; // 是否有行连接符
+
     while (peek(tk) != '\0')
     {
-        if (peek(tk) == '\\')
-            connect_next_line = 1;
-        if (peek(tk) == '\n')
+        char ch = peek(tk);
+
+        if (ch == '\\')
         {
-            if (connect_next_line) // 遇到换行但之前有 '\'，则继续拼接下一行
-                connect_next_line = 0;
-            else
-                break; // 真正的行结束
+            advance(tk);
+            if (consume_newline(tk))
+                connect_next_line = 1;
         }
+
+        // 如果遇到真正的行结束 → token 结束
+        if (consume_newline(tk))
+        {
+            if (!connect_next_line)
+                break;
+        }
+
         advance(tk);
     }
+
     t.length = tk->src + tk->pos - t.start;
+    while (t.length > 0 && is_space(*(t.start + t.length - 1)))
+        t.length--;
+
     return t;
 }
 

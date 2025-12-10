@@ -39,6 +39,11 @@ char advance(Tokenizer *tk)
     // 如果读到了换行符，行号+1，列号重置
     if (peek(tk) == '\n')
         tk->stus.line++, tk->stus.col = 1;
+    else if (peek(tk) == '\r')
+    {
+        tk->pos++;
+        return advance(tk);
+    }
     else
         tk->stus.col++;
 

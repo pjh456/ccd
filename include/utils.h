@@ -10,6 +10,8 @@ int is_digit(unsigned char ch);
 int is_alnum(unsigned char ch);
 int is_space(unsigned char ch);
 
+int consume_newline(Tokenizer *tk);
+
 #ifdef ENABLE_DEBUG
 #define DEBUG(...) fprintf(stderr, __VA_ARGS__)
 #else
