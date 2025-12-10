@@ -6,15 +6,21 @@
 // 循环跳过空白符和注释，直到遇到有效代码字符
 void skip_space(Tokenizer *tk)
 {
-    while (is_space(peek(tk)) || peek(tk) == '/')
+    while (is_space(peek(tk)) || consume_newline(tk) || peek(tk) == '/')
     {
         while (peek(tk) == '/')
         {
             char ch = (tk->pos + 1) < tk->len ? tk->src[tk->pos + 1] : '\0';
             if (ch == '/' || ch == '*')
                 skip_comment(tk); // 进入注释处理
+            else if (is_space(ch))
+                advance(tk);
+            else
+                break;
         }
         if (is_space(peek(tk)))
+            advance(tk);
+        else if (consume_newline(tk))
             advance(tk);
     }
 }
@@ -24,6 +30,7 @@ void skip_comment(Tokenizer *tk)
     advance(tk); // skip /
     if (peek(tk) == '*')
     {
+        advance(tk); // skip *
         while (peek(tk) != '\0')
         {
             if (peek(tk) == '*')
