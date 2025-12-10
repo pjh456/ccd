@@ -4,12 +4,15 @@
 
 #include <string.h>
 
+// 关键字映射表
 typedef struct
 {
     const char *kw;
     TokenType type;
 } KwEntry;
 
+// 关键字查找表
+// 使用简单的线性查找（可用哈希表或 Trie 树优化）
 static const KwEntry kw_table[] = {
 
     {"extern", T_EXTERN},
@@ -58,16 +61,25 @@ Token tokenize_keyword(Tokenizer *tk)
     Token t = make_token(tk, T_UNKNOWN, 1);
     const char *p = t.start;
 
+    // 尝试匹配关键字
     for (const KwEntry *e = kw_table; e->kw; e++)
     {
         size_t len = strlen(e->kw);
+
+        // 1. 检查长度是否越界
+        // 2. 检查字符串是否匹配
         if (tk->pos + len <= tk->len &&
             strncmp(p, e->kw, len) == 0)
         {
+            // 关键点：检查关键字边界
+            // 例如源代码是 "interface"，匹配 "int" 后，下一个字符是 'e' (isalnum)，
+            // 这说明它不是 "int" 关键字，而是标识符的一部分。
             if (!is_alnum(p[len]))
             {
                 t.type = e->type;
                 t.length = len;
+
+                // 更新位置
                 tk->pos += len;
                 tk->stus.col += len;
                 return t;
@@ -75,22 +87,27 @@ Token tokenize_keyword(Tokenizer *tk)
         }
     }
 
+    // 如果不是关键字，说明是普通标识符 (Identifier)
+    // 规则：消耗所有字母、数字和下划线
     while (is_alnum(peek(tk)))
         advance(tk);
+
     t.type = T_IDENTIFIER;
-    t.length = tk->src + tk->pos - t.start;
+    t.length = tk->src + tk->pos - t.start; // 计算长度
     return t;
 }
 
 Token tokenize_number(Tokenizer *tk)
 {
     Token t = make_token(tk, T_NUMBER, 0);
+    // 1. 消耗整数部分
     while (is_digit(peek(tk)))
         advance(tk);
 
+    // 2. 处理小数部分
     if (peek(tk) == '.')
     {
-        advance(tk);
+        advance(tk); // 消耗 '.'
         while (is_digit(peek(tk)))
             advance(tk);
     }
@@ -102,9 +119,12 @@ Token tokenize_number(Tokenizer *tk)
 Token tokenize_char(Tokenizer *tk)
 {
     Token t = make_token(tk, T_CHARACTER, 0);
+
+    // 简单实现：消耗直到遇到下一个单引号
+    // 待优化：需处理转义字符 (如 '\'') 的情况
     while (peek(tk) != '\'')
         advance(tk);
-    advance(tk);
+    advance(tk); // 消耗闭合的 '
     t.length = tk->src + tk->pos - t.start;
     return t;
 }
@@ -112,9 +132,11 @@ Token tokenize_char(Tokenizer *tk)
 Token tokenize_string(Tokenizer *tk)
 {
     Token t = make_token(tk, T_STRING, 0);
+    // 简单实现：消耗直到遇到下一个双引号
+    // 待优化：需处理转义字符 (如 \" )
     while (peek(tk) != '\"')
         advance(tk);
-    advance(tk);
+    advance(tk); // 消耗闭合的 "
     t.length = tk->src + tk->pos - t.start;
     return t;
 }
