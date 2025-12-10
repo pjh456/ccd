@@ -2,23 +2,31 @@
 
 #include <stdint.h>
 
+// 前向声明，告诉编译器 Tokenizer 是个类型，具体细节在别处
 typedef struct Tokenizer Tokenizer;
 
+/**
+ * @brief Token 类型枚举
+ * 使用枚举是为了避免代码中出现 "魔术数字"，让 switch-case 结构更清晰
+ */
 typedef enum
 {
-    T_IDENTIFIER, // x_a
-    T_NUMBER,     // 123
-    T_CHARACTER,  // 'a'
-    T_STRING,     // "xx"
+    // === 基础类型 ===
+    T_IDENTIFIER, // 标识符 (变量名、函数名，如 main, count)
+    T_NUMBER,     // 数字字面量 (123, 3.14)
+    T_CHARACTER,  // 字符字面量 ('a')
+    T_STRING,     // 字符串字面量 ("hello")
 
-    T_NOT,         // !
-    T_TILDE,       // ~
+    // === 位运算符 ===
+    T_NOT,         // ! (逻辑非)
+    T_TILDE,       // ~ (按位取反)
     T_AND,         // &
     T_OR,          // |
     T_XOR,         // ^
     T_LEFT_SHIFT,  // <<
     T_RIGHT_SHIFT, // >>
 
+    // === 算术运算符 ===
     T_PLUS,   // +
     T_MINUS,  // -
     T_STAR,   // *
@@ -26,6 +34,7 @@ typedef enum
     T_MOD,    // %
     T_ASSIGN, // =
 
+    // === 比较/逻辑运算符 ===
     T_LESS,          // <
     T_GREATER,       // >
     T_EQUAL,         // ==
@@ -35,23 +44,29 @@ typedef enum
     T_AND_AND,       // &&
     T_OR_OR,         // ||
 
+    // === 复合赋值位运算符 (&=, <<= 等) ===
     T_AND_ASSIGN,         // &=
     T_OR_ASSIGN,          // |=
     T_XOR_ASSIGN,         // ^=
     T_LEFT_SHIFT_ASSIGN,  // <<=
     T_RIGHT_SHIFT_ASSIGN, // <<=
 
+    // === 复合赋值算数运算符 (+=, -= 等) ===
     T_PLUS_ASSIGN,  // +=
     T_MINUS_ASSIGN, // -=
     T_MUL_ASSIGN,   // *=
     T_DIV_ASSIGN,   // /=
     T_MOD_ASSIGN,   // %=
-    T_INC,          // ++
-    T_DEC,          // --
 
-    T_PREPROCESS, // #
-    T_BACKSLASH,  // 反斜杠
+    // === 自增自减 ===
+    T_INC, // ++
+    T_DEC, // --
 
+    // === 特殊符号 ===
+    T_PREPROCESS, // # (预处理指令)
+    T_BACKSLASH,  // \ (反斜杠)
+
+    // === 分隔符 ===
     T_LEFT_PAREN,    // (
     T_RIGHT_PAREN,   // )
     T_LEFT_BRACKET,  // [
@@ -66,6 +81,7 @@ typedef enum
     T_ARROW,     // ->
     T_QUESTION,  // ?
 
+    // === C 语言关键字 (C11 标准) ===
     T_EXTERN,   // extern
     T_STATIC,   // static
     T_INLINE,   // inline
@@ -104,19 +120,30 @@ typedef enum
     T_TYPEDEF, // typedef
     T_UNION,   // union
 
-    T_EOF,    // EOF
-    T_UNKNOWN // Unknown
+    // === 状态控制 ===
+    T_EOF,    // End Of File (文件结束)
+    T_UNKNOWN // 无法识别的字符
 } TokenType;
 
+/**
+ * @brief Token 结构体
+ * 采用 String View (视图) 模式，不拷贝字符串，只记录指针和长度，
+ * 极大提高了 Tokenizer 的性能。
+ */
 typedef struct
 {
-    TokenType type;
-    const char *start;
-    size_t length;
-    int line;
-    int col;
+    TokenType type;    // 类别
+    const char *start; // 指向源代码字符串中的起始位置
+    size_t length;     // Token 的长度
+    int line;          // 所在的行号
+    int col;           // 所在的列号
 } Token;
 
+// 获取 Token 类型的字符串名称 (用于调试打印)
 const char *token_name(TokenType tt);
+
+// 打印 Token 详细信息
 void print_token(const Token *t);
+
+// 构造一个 Token 的辅助函数
 Token make_token(Tokenizer *tk, TokenType tt, size_t len);

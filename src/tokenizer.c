@@ -8,77 +8,79 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define SRC(T) ((T)->src)
-#define POS(T) ((T)->pos)
-#define LEN(T) ((T)->len)
-#define STATUS(T) ((T)->stus)
-#define CUR(T) (SRC(T) + POS(T))
-#define CUR_CHAR(T) ((unsigned char)(*CUR(T)))
-#define LINE(T) (STATUS(T).line)
-#define COLUMN(T) (STATUS(T).col)
-#define TOKENIZE_STATUS(T) (STATUS(T).stus)
-
-#define KEYWORD(T, pos, tt, str)                 \
-    if (strncmp(pos, str, sizeof(str) - 1) == 0) \
-    {                                            \
-        POS(T) += sizeof(str) - 1;               \
-        return make_token(tt, pos, sizeof(str)); \
-    }
-
-#define EAT_IF(T, ch) ONCE(if (CUR_CHAR(T) == (ch)) advance(T);)
-#define EAT_WHILE(T, cond) ONCE(while (cond(CUR_CHAR(T))) advance(T);)
-
+// 构造函数：初始化 Tokenizer
 Tokenizer *tokenizer_new(const char *src)
 {
     Tokenizer *tk = malloc(sizeof(*tk));
-    SRC(tk) = src, POS(tk) = 0, LEN(tk) = strlen(src);
-    LINE(tk) = COLUMN(tk) = 1;
+    tk->src = src, tk->pos = 0;
+    tk->len = strlen(src);            // 注意：这里需要 O(N) 时间扫描长度
+    tk->stus.line = tk->stus.col = 1; // 行、列号从 1 开始
     return tk;
 }
 
+// 析构函数：释放 Tokenizer 内存
 void tokenizer_free(Tokenizer *tk)
 {
     if (!tk)
         return;
-    free(tk);
+    free(tk); // 只释放结构体本身，src 是外部传入的，不归我们需要释放
 }
 
+// 偷看一眼：返回当前字符，但不移动光标
 char peek(Tokenizer *tk)
 {
-    return (POS(tk) < LEN(tk)) ? SRC(tk)[POS(tk)] : '\0';
+    return (tk->pos < tk->len) ? tk->src[tk->pos] : '\0';
 }
 
+// 步进：返回当前字符，并将光标向前移动一格
+// 同时负责更新行号和列号
 char advance(Tokenizer *tk)
 {
+    // 如果读到了换行符，行号+1，列号重置
     if (peek(tk) == '\n')
         tk->stus.line++, tk->stus.col = 1;
     else
         tk->stus.col++;
 
-    if (POS(tk) < LEN(tk))
-        return SRC(tk)[POS(tk)++];
+    if (tk->pos < tk->len)
+        return tk->src[tk->pos++]; // 返回当前字符并 pos++
     return '\0';
 }
 
+// === 核心调度逻辑 ===
+// 这是词法分析器的主循环入口
 Token next(Tokenizer *tk)
 {
+    // 1. 跳过无意义的字符（空格、换行、制表符、注释等）
     skip_space(tk);
+
+    // 2. 检查是否结束
     char ch = peek(tk);
     if (ch == '\0')
         return tokenize_eof(tk);
-    else if (is_alpha(ch))
+
+    // 3. 状态机分发 (Dispatcher)
+    // 根据首字符的特征，决定调用哪个子函数
+
+    // 情况 A: 是字母或下划线 -> 可能是关键字，也可能是标识符
+    if (is_alpha(ch))
         return tokenize_keyword(tk);
-    else if (is_digit(ch))
+
+    // 情况 B: 是数字 -> 解析数字字面量
+    if (is_digit(ch))
         return tokenize_number(tk);
 
+    // 情况 C: 符号处理
     switch (ch)
     {
-    case '\'':
+    case '\'': // 单引号 -> 字符
         return tokenize_char(tk);
-    case '\"':
+    case '\"': // 双引号 -> 字符串
         return tokenize_string(tk);
-    case '#':
+    case '#': // 井号 -> 预处理
         return tokenize_preprocessor(tk);
+    // 其余所有标点符号，统一交给 operator 处理
+    // 那里会有更复杂的贪婪匹配逻辑 (比如区分 + 和 ++)
     case '<':
     case '>':
     case '=':

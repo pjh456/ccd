@@ -4,8 +4,12 @@
 
 void skip_space(Tokenizer *tk)
 {
-    while (is_space(peek(tk)))
+    while (is_space(peek(tk)) || peek(tk) == '/')
+    {
+        if (peek(tk) == '/')
+            skip_comment(tk);
         advance(tk);
+    }
 }
 
 void skip_comment(Tokenizer *tk)

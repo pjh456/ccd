@@ -2,12 +2,16 @@
 #include "tokenizer_impl/tokenizer_impl.h"
 #include <string.h>
 
+// 运算符映射表
 typedef struct
 {
-    const char *op;
-    TokenType type;
+    const char *op; // 符号文本，如 ">>="
+    TokenType type; // 对应的枚举
 } OpEntry;
 
+// 思考：这个表必须精心排序？
+// 解答：其实不需要严格排序，因为下面的算法会遍历整个表寻找“最长匹配”。
+// 但为了性能，通常把长字符放在前面。
 static const OpEntry op_table[] = {
 
     // ===== 长度 3 =====
@@ -78,18 +82,25 @@ static const OpEntry op_table[] = {
 
 Token tokenize_operator(Tokenizer *tk)
 {
-    Token t = make_token(tk, T_UNKNOWN, 1);
-    const char *p = t.start;
+    Token t = make_token(tk, T_UNKNOWN, 1); // 预设一个未知 Token
+    const char *p = t.start;                // 获取源码当前位置指针
 
     const OpEntry *best = NULL;
     size_t best_len = 0;
 
+    // === 贪婪匹配算法 (Maximal Munch) ===
+    // 假设源码是 ">>= a"，如果不贪婪，可能匹配成 ">" (大于号)
+    // 我们必须找到能匹配上的、最长的那个符号。
     for (const OpEntry *e = op_table; e->op; e++)
     {
         size_t len = strlen(e->op);
+
+        // 1. 检查长度是否越界
+        // 2. 检查字符串是否匹配
         if (tk->pos + len <= tk->len &&
             strncmp(p, e->op, len) == 0)
         {
+            // 如果匹配成功，且比当前记录的 best 还长，就更新
             if (len > best_len)
             {
                 best = e;
@@ -100,12 +111,15 @@ Token tokenize_operator(Tokenizer *tk)
 
     if (best)
     {
+        // 找到了最长匹配
         t.type = best->type;
         t.length = best_len;
+
+        // 更新 Tokenizer 状态
         tk->pos += best_len;
         tk->stus.col += best_len;
     }
-    else
+    else // 这里的逻辑主要是处理边界，正常 switch 进来的应该都能匹配
         advance(tk);
     return t;
 }
