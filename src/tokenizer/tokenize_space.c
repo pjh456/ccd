@@ -37,7 +37,9 @@ void skip_comment(Tokenizer *tk)
     }
     else
     {
-        while (peek(tk) != '\0' && peek(tk) != '\n')
+        while (peek(tk) != '\0' && !consume_newline(tk))
+            advance(tk);
+        if (peek(tk) == '\n')
             advance(tk);
     }
 }
