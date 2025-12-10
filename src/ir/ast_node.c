@@ -1,70 +1,112 @@
-// #include "ir_impl/ast_node.h"
+#include "ir_impl/ast_node.h"
 
-// #include <stdlib.h>
-// #include <stdio.h>
+#include <stdlib.h>
 
-// ASTNode *ast_node_new(NodeType nt, Token *t)
-// {
-//     ASTNode *node = calloc(1, sizeof(ASTNode));
-//     node->type = nt;
-//     node->token = t;
-//     return node;
-// }
+ASTNode *ast_node_new(NodeType nt, Token *t)
+{
+    ASTNode *node = malloc(sizeof(*node));
+    node->type = nt;
+    node->token = t;
+    return node;
+}
 
-// void free_node(ASTNode *node)
-// {
-//     if (!node)
-//         return;
+void ast_node_free(ASTNode *node)
+{
+    if (!node)
+        return;
 
-//     switch (node->type)
-//     {
-//     case AST_BLOCK:
-//         if (node->block.stmts)
-//         {
-//             for (size_t i = 0; i < node->block.stmts->size; i++)
-//             {
-//                 free_node(*(ASTNode **)vector_get(node->block.stmts, i));
-//             }
-//             vector_free(node->block.stmts);
-//         }
-//         break;
-//     case AST_IF:
-//         free_node(node->if_stmt.cond);
-//         free_node(node->if_stmt.then);
-//         free_node(node->if_stmt.els);
-//         break;
-//     case AST_FOR:
-//         free_node(node->for_stmt.init);
-//         free_node(node->for_stmt.cond);
-//         free_node(node->for_stmt.inc);
-//         free_node(node->for_stmt.body);
-//         break;
-//     case AST_WHILE:
-//     case AST_DO_WHILE:
-//         free_node(node->loop.cond);
-//         free_node(node->loop.body);
-//         break;
-//     case AST_RETURN:
-//         // case AST_E:
-//         free_node(node->expr.expr);
-//         break;
-//     case AST_VAR_DECL:
-//         free_node(node->decl.init);
-//         break;
-//     case AST_NUMBER:
-//     case AST_VAR:
-//     case AST_BREAK:
-//     case AST_CONTINUE:
-//         break;
-//     default: // 二元运算
-//         if (node->bin.lhs)
-//             free_node(node->bin.lhs);
-//         if (node->bin.rhs)
-//             free_node(node->bin.rhs);
-//         break;
-//     }
-//     free(node);
-// }
+    switch (node->type)
+    {
+    case AST_BLOCK:
+        if (node->block.stmts)
+        {
+            for (size_t i = 0; i < node->block.stmts->size; ++i)
+            {
+                ast_node_free((ASTNode *)vector_get(node->block.stmts, i));
+            }
+            vector_free(node->block.stmts);
+        }
+        break;
+    case AST_EXPRESSION:
+    case AST_VAL2PTR:
+    case AST_PTR2VAL:
+    case AST_NOT:
+    case AST_TILDE:
+    case AST_INC:
+    case AST_DEC:
+    case AST_RETURN:
+        ast_node_free(node->expr.expr);
+        break;
+    case AST_AND:
+    case AST_OR:
+    case AST_XOR:
+    case AST_LEFT_SHIFT:
+    case AST_RIGHT_SHIFT:
+
+    case AST_PLUS:
+    case AST_MINUS:
+    case AST_STAR:
+    case AST_DIV:
+    case AST_MOD:
+
+    case AST_LESS:
+    case AST_GREATER:
+    case AST_EQUAL:
+    case AST_NOT_EQUAL:
+    case AST_LESS_EQUAL:
+    case AST_GREATER_EQUAL:
+    case AST_AND_AND:
+    case AST_OR_OR:
+        ast_node_free(node->bin.lhs);
+        ast_node_free(node->bin.rhs);
+        break;
+    case AST_AND_ASSIGN:
+    case AST_OR_ASSIGN:
+    case AST_XOR_ASSIGN:
+    case AST_LEFT_SHIFT_ASSIGN:
+    case AST_RIGHT_SHIFT_ASSIGN:
+
+    case AST_PLUS_ASSIGN:
+    case AST_MINUS_ASSIGN:
+    case AST_MUL_ASSIGN:
+    case AST_DIV_ASSIGN:
+    case AST_MOD_ASSIGN:
+        ast_node_free(node->assign.var);
+        ast_node_free(node->assign.expr);
+        break;
+
+    case AST_IF:
+        ast_node_free(node->if_stmt.cond);
+        ast_node_free(node->if_stmt.then);
+        ast_node_free(node->if_stmt.els);
+        break;
+    case AST_FOR:
+        ast_node_free(node->for_stmt.init);
+        ast_node_free(node->for_stmt.cond);
+        ast_node_free(node->for_stmt.inc);
+        ast_node_free(node->for_stmt.body);
+        break;
+    case AST_WHILE:
+        ast_node_free(node->while_stmt.cond);
+        ast_node_free(node->while_stmt.body);
+        break;
+    case AST_DO_WHILE:
+        ast_node_free(node->do_while_stmt.cond);
+        ast_node_free(node->do_while_stmt.body);
+        break;
+    case AST_BREAK:
+    case AST_CONTINUE:
+        break;
+    case AST_IDENTIFIER:
+    case AST_NUMBER:
+    case AST_CHARACTER:
+    case AST_STRING:
+        break;
+    default:
+        break;
+    }
+    free(node);
+}
 
 // void print_indent(int indent)
 // {
