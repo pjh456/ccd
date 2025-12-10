@@ -100,7 +100,7 @@ struct ASTNode
         struct
         {
             ASTNode *var;
-            ASTNode *expr
+            ASTNode *expr;
         } assign;
 
         struct
