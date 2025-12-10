@@ -119,11 +119,26 @@ Token tokenize_number(Tokenizer *tk)
 Token tokenize_char(Tokenizer *tk)
 {
     Token t = make_token(tk, T_CHARACTER, 0);
+    advance(tk); // 消耗开头的 '
 
-    // 简单实现：消耗直到遇到下一个单引号
-    // 待优化：需处理转义字符 (如 '\'') 的情况
     while (peek(tk) != '\'')
+    {
+        char ch = peek(tk);
+
+        // 非法：字符字面量没闭合
+        if (ch == '\0' || ch == '\n')
+            break;
+
+        if (ch == '\\')
+        {
+            advance(tk); // 消耗 '\'
+            if (peek(tk) != '\0')
+                advance(tk); // 消耗转义字符，比如  'n', '\'', '\\'
+            continue;
+        }
+
         advance(tk);
+    }
     advance(tk); // 消耗闭合的 '
     t.length = tk->src + tk->pos - t.start;
     return t;
@@ -132,10 +147,26 @@ Token tokenize_char(Tokenizer *tk)
 Token tokenize_string(Tokenizer *tk)
 {
     Token t = make_token(tk, T_STRING, 0);
-    // 简单实现：消耗直到遇到下一个双引号
-    // 待优化：需处理转义字符 (如 \" )
+    advance(tk); // 消耗开头的 "
+
     while (peek(tk) != '\"')
+    {
+        char ch = peek(tk);
+
+        // 非法：字符串字面量没闭合
+        if (ch == '\0' || ch == '\n')
+            break;
+
+        if (ch == '\\')
+        {
+            advance(tk); // 消耗 '\'
+            if (peek(tk) != '\0')
+                advance(tk); // 消耗转义字符，比如  'n', '\'', '\\'
+            continue;
+        }
+
         advance(tk);
+    }
     advance(tk); // 消耗闭合的 "
     t.length = tk->src + tk->pos - t.start;
     return t;
