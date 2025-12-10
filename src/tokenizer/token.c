@@ -211,7 +211,10 @@ void print_token(const Token *t)
 Token make_token(Tokenizer *tk, TokenType tt, size_t len)
 {
     Token t;
-    t.type = tt, t.start = tk->src + tk->pos, t.length = len;
+    t.type = tt;
+    t.start = tk->src + tk->pos; // 记录 Token 在源码中的绝对地址
+    t.length = len;
+    // 记录生成该 Token 时的行号和列号
     t.line = tk->stus.line, t.col = tk->stus.col;
     return t;
 }

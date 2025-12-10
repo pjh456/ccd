@@ -44,17 +44,19 @@ void skip_comment(Tokenizer *tk)
 Token tokenize_preprocessor(Tokenizer *tk)
 {
     Token t = make_token(tk, T_PREPROCESS, 0);
-    int connect_next_line = 0;
+    int connect_next_line = 0; // 标记是否遇到行拼接符 '\'
+
+    // 预处理指令通常占据整行
     while (peek(tk) != '\0')
     {
         if (peek(tk) == '\\')
             connect_next_line = 1;
         if (peek(tk) == '\n')
         {
-            if (connect_next_line)
+            if (connect_next_line) // 遇到换行但之前有 '\'，则继续拼接下一行
                 connect_next_line = 0;
             else
-                break;
+                break; // 真正的行结束
         }
         advance(tk);
     }
