@@ -38,6 +38,8 @@ Tokenizer *tokenizer_new(const char *src)
 
 void tokenizer_free(Tokenizer *tk)
 {
+    if (!tk)
+        return;
     free(tk);
 }
 

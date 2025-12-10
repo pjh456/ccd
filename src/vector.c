@@ -15,6 +15,8 @@ Vector *vector_new(size_t ele_size)
 
 void vector_free(Vector *vec)
 {
+    if (!vec)
+        return;
     if (vec->data)
         free(vec->data);
     free(vec);
