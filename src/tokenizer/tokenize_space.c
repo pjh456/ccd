@@ -8,13 +8,14 @@ void skip_space(Tokenizer *tk)
 {
     while (is_space(peek(tk)) || peek(tk) == '/')
     {
-        if (peek(tk) == '/')
+        while (peek(tk) == '/')
         {
             char ch = (tk->pos + 1) < tk->len ? tk->src[tk->pos + 1] : '\0';
             if (ch == '/' || ch == '*')
                 skip_comment(tk); // 进入注释处理
         }
-        advance(tk);
+        if (is_space(peek(tk)))
+            advance(tk);
     }
 }
 
