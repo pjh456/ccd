@@ -199,6 +199,8 @@ const char *token_name(TokenType tt)
 
 void print_token(const Token *t)
 {
+    // 格式化输出：
+    // 行:列  [类型名称]  "原始内容"
     printf(
         "%s (%.*s) at %d:%d\n",
         token_name(t->type),
