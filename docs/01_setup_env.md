@@ -160,7 +160,7 @@ gcc main.c -o main
 在 `main.c` 同级目录下，新建一个文件 `CMakeLists.txt`（文件名严格区分大小写，一个字都不能错）：
 ```cmake
 # 设定 CMake 最低版本要求
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.5)
 
 # 设定项目名称
 project(CCD_Tutorial)
