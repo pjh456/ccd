@@ -10,6 +10,16 @@
 #include "vector.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+
+Expression *expression_copy(Expression *expr)
+{
+    if (!expr)
+        return NULL;
+    Expression *copied_expr = malloc(sizeof(*copied_expr));
+    memcpy(copied_expr, expr, sizeof(*expr));
+    return copied_expr;
+}
 
 void expression_free(Expression *expr)
 {

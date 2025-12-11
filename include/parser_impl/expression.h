@@ -208,6 +208,8 @@ Expression *make_expression_conditional(Expression *cond, Expression *then_expr,
 Expression *make_expression_comma(Vector *exprs);
 Expression *make_expression_paren(Expression *expr);
 
+Expression *expression_copy(Expression *expr);
+
 void expression_free(Expression *expr);
 
 void print_expression(Expression *expr);
