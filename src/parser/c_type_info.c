@@ -3,12 +3,22 @@
 #include "vector.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 CTypeInfo *make_unknown()
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
     cti->type = CT_UNKNOWN;
     return cti;
+}
+
+CTypeInfo *c_type_info_copy(CTypeInfo *cti)
+{
+    if (!cti)
+        return cti;
+    CTypeInfo *copied_cti = malloc(sizeof(*cti));
+    memcpy(copied_cti, cti, sizeof(*cti));
+    return copied_cti;
 }
 
 void c_type_info_free(CTypeInfo *cti)

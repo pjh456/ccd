@@ -146,6 +146,8 @@ EnumItem *make_enum_item_type(char *name, long long val);
 
 CTypeInfo *make_unknown();
 
+CTypeInfo *c_type_info_copy(CTypeInfo *cti);
+
 void c_type_info_free(CTypeInfo *cti);
 
 char *c_type_name(CType ct);

@@ -174,6 +174,7 @@ void expression_literal_free(Expression *expr)
 {
     if (!expr || expr->type != EXPR_LITERAL)
         return;
+    c_type_info_free(expr->type_info);
     switch (expr->type_info->type)
     {
     case CT_UNKNOWN: // 字符串
