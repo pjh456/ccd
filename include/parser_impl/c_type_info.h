@@ -123,26 +123,28 @@ struct CTypeInfo
     };
 };
 
-CTypeInfo *make_void(unsigned storages);
-CTypeInfo *make_char(unsigned storages, unsigned qualifiers, unsigned modifiers);
-CTypeInfo *make_int(unsigned storages, unsigned qualifiers, unsigned modifiers);
-CTypeInfo *make_float(unsigned storages, unsigned qualifiers);
-CTypeInfo *make_double(unsigned storages, unsigned qualifiers, unsigned modifiers);
+CTypeInfo *make_void_type(unsigned storages);
+CTypeInfo *make_char_type(unsigned storages, unsigned qualifiers, unsigned modifiers);
+CTypeInfo *make_int_type(unsigned storages, unsigned qualifiers, unsigned modifiers);
+CTypeInfo *make_float_type(unsigned storages, unsigned qualifiers);
+CTypeInfo *make_double_type(unsigned storages, unsigned qualifiers, unsigned modifiers);
 
-CTypeInfo *make_pointer(CTypeInfo *base);
-CTypeInfo *make_array(CTypeInfo *base, size_t len);
-CTypeInfo *make_function(CTypeInfo *ret, Vector *params, int is_var);
+CTypeInfo *make_pointer_type(CTypeInfo *base);
+CTypeInfo *make_array_type(CTypeInfo *base, size_t len);
+CTypeInfo *make_function_type(CTypeInfo *ret, Vector *params, int is_var);
 
-CTypeInfo *make_struct(Vector *fields);
-void complete_struct(CTypeInfo *cti, Vector *fields);
-CTypeInfo *make_union(Vector *fields);
-void complete_union(CTypeInfo *cti, Vector *fields);
-CTypeInfo *make_enum(Vector *items);
-void complete_enum(CTypeInfo *cti, Vector *items);
+CTypeInfo *make_struct_type(Vector *fields);
+void complete_struct_type(CTypeInfo *cti, Vector *fields);
+CTypeInfo *make_union_type(Vector *fields);
+void complete_union_type(CTypeInfo *cti, Vector *fields);
+CTypeInfo *make_enum_type(Vector *items);
+void complete_enum_type(CTypeInfo *cti, Vector *items);
 
-Param *make_param(char *name, CTypeInfo *type);
-Field *make_field(char *name, CTypeInfo *type, size_t offset);
-EnumItem *make_enum_item(char *name, long long val);
+Param *make_param_type(char *name, CTypeInfo *type);
+Field *make_field_type(char *name, CTypeInfo *type, size_t offset);
+EnumItem *make_enum_item_type(char *name, long long val);
+
+CTypeInfo *make_unknown();
 
 void c_type_info_free(CTypeInfo *cti);
 

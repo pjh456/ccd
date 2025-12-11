@@ -2,7 +2,7 @@
 #include "parser_impl/c_type_info_impl.h"
 #include <stdlib.h>
 
-CTypeInfo *make_void(unsigned storages)
+CTypeInfo *make_void_type(unsigned storages)
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
     cti->type = CT_VOID;
@@ -11,7 +11,7 @@ CTypeInfo *make_void(unsigned storages)
     return cti;
 }
 
-CTypeInfo *make_char(unsigned storages, unsigned qualifiers, unsigned modifiers)
+CTypeInfo *make_char_type(unsigned storages, unsigned qualifiers, unsigned modifiers)
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
     cti->type = CT_CHAR;
@@ -29,7 +29,7 @@ CTypeInfo *make_char(unsigned storages, unsigned qualifiers, unsigned modifiers)
     return cti;
 }
 
-CTypeInfo *make_int(unsigned storages, unsigned qualifiers, unsigned modifiers)
+CTypeInfo *make_int_type(unsigned storages, unsigned qualifiers, unsigned modifiers)
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
     cti->type = CT_INT;
@@ -74,7 +74,7 @@ CTypeInfo *make_int(unsigned storages, unsigned qualifiers, unsigned modifiers)
     return cti;
 }
 
-CTypeInfo *make_float(unsigned storages, unsigned qualifiers)
+CTypeInfo *make_float_type(unsigned storages, unsigned qualifiers)
 
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
@@ -85,7 +85,7 @@ CTypeInfo *make_float(unsigned storages, unsigned qualifiers)
     return cti;
 }
 
-CTypeInfo *make_double(unsigned storages, unsigned qualifiers, unsigned modifiers)
+CTypeInfo *make_double_type(unsigned storages, unsigned qualifiers, unsigned modifiers)
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
     cti->type = CT_DOUBLE;

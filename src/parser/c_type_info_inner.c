@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-Param *make_param(char *name, CTypeInfo *type)
+Param *make_param_type(char *name, CTypeInfo *type)
 {
     Param *param = malloc(sizeof(*param));
     if (name)
@@ -18,7 +18,7 @@ Param *make_param(char *name, CTypeInfo *type)
     return param;
 }
 
-Field *make_field(char *name, CTypeInfo *type, size_t offset)
+Field *make_field_type(char *name, CTypeInfo *type, size_t offset)
 {
     Field *field = malloc(sizeof(*field));
     if (name)
@@ -31,7 +31,7 @@ Field *make_field(char *name, CTypeInfo *type, size_t offset)
     return field;
 }
 
-EnumItem *make_enum_item(char *name, long long val)
+EnumItem *make_enum_item_type(char *name, long long val)
 {
     if (!name)
         return NULL;

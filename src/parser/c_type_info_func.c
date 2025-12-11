@@ -3,7 +3,7 @@
 #include "vector.h"
 #include <stdlib.h>
 
-CTypeInfo *make_function(CTypeInfo *ret, Vector *params, int is_var)
+CTypeInfo *make_function_type(CTypeInfo *ret, Vector *params, int is_var)
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
     cti->type = CT_FUNCTION;

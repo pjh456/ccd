@@ -2,7 +2,7 @@
 #include "parser_impl/c_type_info_impl.h"
 #include <stdlib.h>
 
-CTypeInfo *make_pointer(CTypeInfo *base)
+CTypeInfo *make_pointer_type(CTypeInfo *base)
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
     cti->type = CT_POINTER;
@@ -11,7 +11,7 @@ CTypeInfo *make_pointer(CTypeInfo *base)
     return cti;
 }
 
-CTypeInfo *make_array(CTypeInfo *base, size_t len)
+CTypeInfo *make_array_type(CTypeInfo *base, size_t len)
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
     cti->type = CT_ARRAY;

@@ -4,6 +4,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+CTypeInfo *make_unknown()
+{
+    CTypeInfo *cti = malloc(sizeof(*cti));
+    cti->type = CT_UNKNOWN;
+    return cti;
+}
+
 void c_type_info_free(CTypeInfo *cti)
 {
     if (!cti)

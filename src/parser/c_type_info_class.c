@@ -3,7 +3,7 @@
 #include "vector.h"
 #include <stdlib.h>
 
-CTypeInfo *make_struct(Vector *fields)
+CTypeInfo *make_struct_type(Vector *fields)
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
     cti->type = CT_STRUCT;
@@ -18,7 +18,7 @@ CTypeInfo *make_struct(Vector *fields)
         return cti;
     }
 
-    complete_struct(cti, fields);
+    complete_struct_type(cti, fields);
     return cti;
 }
 
@@ -27,7 +27,7 @@ size_t align_up(size_t x, size_t align)
     return (x + align - 1) & ~(align - 1);
 }
 
-void complete_struct(CTypeInfo *cti, Vector *fields)
+void complete_struct_type(CTypeInfo *cti, Vector *fields)
 {
     if (!cti || !fields)
         return;
@@ -65,7 +65,7 @@ void complete_struct(CTypeInfo *cti, Vector *fields)
     cti->align = max_align;
 }
 
-CTypeInfo *make_union(Vector *fields)
+CTypeInfo *make_union_type_type(Vector *fields)
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
     cti->type = CT_UNION;
@@ -80,11 +80,11 @@ CTypeInfo *make_union(Vector *fields)
         return cti;
     }
 
-    complete_union(cti, fields);
+    complete_union_type(cti, fields);
     return cti;
 }
 
-void complete_union(CTypeInfo *cti, Vector *fields)
+void complete_union_type(CTypeInfo *cti, Vector *fields)
 {
     if (!cti || !fields)
         return;
@@ -123,7 +123,7 @@ void complete_union(CTypeInfo *cti, Vector *fields)
     cti->align = max_align;
 }
 
-CTypeInfo *make_enum(Vector *items)
+CTypeInfo *make_enum_type(Vector *items)
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
     cti->type = CT_ENUM;
@@ -137,11 +137,11 @@ CTypeInfo *make_enum(Vector *items)
         return cti;
     }
 
-    complete_enum(cti, items);
+    complete_enum_type(cti, items);
     return cti;
 }
 
-void complete_enum(CTypeInfo *cti, Vector *items)
+void complete_enum_type(CTypeInfo *cti, Vector *items)
 {
     if (!cti || !items)
         return;
