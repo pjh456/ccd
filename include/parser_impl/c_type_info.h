@@ -152,4 +152,8 @@ void c_type_info_free(CTypeInfo *cti);
 
 char *c_type_name(CType ct);
 
+void print_c_type_info_storages(unsigned s);
+void print_c_type_info_func_specifiers(unsigned fs);
+void print_c_type_info_qualifiers(unsigned q);
+void print_c_type_info_modifiers(unsigned mods);
 void print_c_type_info(CTypeInfo *cti);

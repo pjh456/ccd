@@ -12,6 +12,8 @@ int is_space(unsigned char ch);
 
 int consume_newline(Tokenizer *tk);
 
+void print_indent(int indent);
+
 #ifdef ENABLE_DEBUG
 #define DEBUG(...) fprintf(stderr, __VA_ARGS__)
 #else

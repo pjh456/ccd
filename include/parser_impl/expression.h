@@ -207,4 +207,4 @@ Expression *make_expression_paren(Expression *expr);
 
 void expression_free(Expression *expr);
 
-// void print_expression(Expression *expr);
+void print_expression(Expression *expr);

@@ -1,4 +1,5 @@
 #include "utils.h"
+#include <stdio.h>
 
 int is_alpha(unsigned char ch) { return isalpha(ch) || ch == '_'; }
 int is_digit(unsigned char ch) { return ch >= '0' && ch <= '9'; }
@@ -20,4 +21,10 @@ int consume_newline(Tokenizer *tk)
     }
 
     return 0;
+}
+
+void print_indent(int indent)
+{
+    for (int i = 0; i < indent; i++)
+        putchar(' ');
 }
