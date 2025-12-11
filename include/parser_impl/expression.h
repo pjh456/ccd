@@ -2,6 +2,7 @@
 
 #include "../tokenizer_impl/token.h"
 
+typedef struct Vector Vector;
 typedef struct CTypeInfo CTypeInfo;
 typedef struct Expression Expression;
 
@@ -34,11 +35,11 @@ struct Expression
 {
     ExprType type;
     Token token;
+    CTypeInfo *type_info;
     union
     {
         struct
         {
-            CTypeInfo *type_info;
             union
             {
                 signed char signed_char_v;
@@ -71,7 +72,7 @@ struct Expression
 
         struct
         {
-            CTypeInfo *typeinfo;
+            CTypeInfo *type_info;
             Expression *expr;
         } cast;
 
@@ -93,9 +94,8 @@ struct Expression
 
         struct
         {
-            Expression *callee;
-            Expression **args;
-            int count;
+            Expression *func;
+            Vector *args; // Expressions
         } call;
 
         struct
@@ -110,12 +110,15 @@ struct Expression
 
         struct
         {
-            Expression **exprs;
+            Vector *exprs; // Expressions
             int count;
         } comma;
     };
 };
 
-Expression *make_literal(CTypeInfo *cti, void *data);
+Expression *make_expression_literal(CTypeInfo *cti, void *data);
+// Expression *make_expression_identifier(char *name);
 
 void expression_free(Expression *expr);
+
+// void print_expression(Expression *expr);

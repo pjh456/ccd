@@ -4,13 +4,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-Expression *make_literal(CTypeInfo *cti, void *data)
+Expression *make_expression_literal(CTypeInfo *cti, void *data)
 {
     if (!cti)
         return NULL;
 
     Expression *expr = malloc(sizeof(*expr));
-    expr->literal.type_info = cti;
+    expr->type_info = cti;
     expr->type = EXPR_LITERAL;
 
     switch (cti->type)
@@ -174,7 +174,7 @@ void expression_literal_free(Expression *expr)
 {
     if (!expr || expr->type != EXPR_LITERAL)
         return;
-    switch (expr->literal.type_info->type)
+    switch (expr->type_info->type)
     {
     case CT_UNKNOWN: // 字符串
         if (expr->literal.data.string_v)
