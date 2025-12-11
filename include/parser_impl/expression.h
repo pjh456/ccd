@@ -170,6 +170,11 @@ struct Expression
 
         struct
         {
+            Expression *base, *mem;
+        } member;
+
+        struct
+        {
             Expression *cond, *then_expr, *else_expr;
         } conditional;
 
@@ -189,6 +194,9 @@ Expression *make_expression_unary(UnaryOperator op, Expression *expr, int is_pre
 Expression *make_expression_binary(BinaryOperator op, Expression *lhs, Expression *rhs);
 Expression *make_expression_call(Expression *func, Vector *args);
 Expression *make_expression_sizeof(Expression *expr);
+Expression *make_expression_subscript(Expression *base, Expression *index);
+Expression *make_expression_member(Expression *base, Expression *mem);
+Expression *make_expression_ptr_member(Expression *base, Expression *mem);
 
 void expression_free(Expression *expr);
 
