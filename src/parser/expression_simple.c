@@ -12,7 +12,10 @@ Expression *make_expression_subscript(Expression *base, Expression *index)
     Expression *val = malloc(sizeof(*val));
     memset(val, 0, sizeof(*val));
 
-    val->type_info = c_type_info_copy(base->type_info->array.base);
+    if (base->type_info)
+        val->type_info = c_type_info_copy(base->type_info->array.base);
+    else
+        val->type_info = NULL;
     val->type = EXPR_SUBSCRIPT;
 
     val->subscript.base = base;
