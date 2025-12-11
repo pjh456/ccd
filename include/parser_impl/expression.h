@@ -160,6 +160,11 @@ struct Expression
 
         struct
         {
+            Expression *expr;
+        } sizeof_call;
+
+        struct
+        {
             Expression *base, *index;
         } subscript;
 
@@ -182,6 +187,8 @@ Expression *make_expression_cast(CTypeInfo *cti, Expression *expr);
 Expression *make_expression_assign(AssignOperator op, Expression *lhs, Expression *rhs);
 Expression *make_expression_unary(UnaryOperator op, Expression *expr, int is_prefix);
 Expression *make_expression_binary(BinaryOperator op, Expression *lhs, Expression *rhs);
+Expression *make_expression_call(Expression *func, Vector *args);
+Expression *make_expression_sizeof(Expression *expr);
 
 void expression_free(Expression *expr);
 
