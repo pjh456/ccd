@@ -33,6 +33,12 @@ void vector_free(Vector *vec);
 int vector_reserve(Vector *vec, size_t new_cap);
 
 /**
+ * @brief 调整大小
+ * 确保 vector 有 new_size 个元素，避免频繁 realloc。
+ */
+int vector_resize(Vector *vec, size_t new_size);
+
+/**
  * @brief 向尾部添加元素
  * 如果容量不足，会自动扩容（通常是翻倍）。
  * @param elem 指向要复制的数据的指针
