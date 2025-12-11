@@ -181,8 +181,12 @@ struct Expression
         struct
         {
             Vector *exprs; // Expressions
-            int count;
         } comma;
+
+        struct
+        {
+            Expression *expr;
+        } paren;
     };
 };
 
@@ -197,6 +201,9 @@ Expression *make_expression_sizeof(Expression *expr);
 Expression *make_expression_subscript(Expression *base, Expression *index);
 Expression *make_expression_member(Expression *base, Expression *mem);
 Expression *make_expression_ptr_member(Expression *base, Expression *mem);
+Expression *make_expression_conditional(Expression *cond, Expression *then_expr, Expression *else_expr);
+Expression *make_expression_comma(Vector *exprs);
+Expression *make_expression_paren(Expression *expr);
 
 void expression_free(Expression *expr);
 
