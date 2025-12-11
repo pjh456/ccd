@@ -1,5 +1,6 @@
-#include "parser_impl/expression_literal_impl.h"
 #include "parser_impl/expression.h"
+#include "parser_impl/expression_literal_impl.h"
+#include "parser_impl/expression_identifier_impl.h"
 #include <stdlib.h>
 
 void expression_free(Expression *expr)
@@ -12,10 +13,11 @@ void expression_free(Expression *expr)
         expression_literal_free(expr);
         break;
     case EXPR_IDENTIFIER:
+        expression_identifier_free(expr);
         break;
     case EXPR_CAST:
+        expression_cast_free(expr);
         break;
-
     case EXPR_ASSIGN:
         break;
     case EXPR_UNARY:
