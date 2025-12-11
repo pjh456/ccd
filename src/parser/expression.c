@@ -1,10 +1,11 @@
 #include "parser_impl/expression_literal_impl.h"
 #include "parser_impl/expression.h"
+#include <stdlib.h>
 
 void expression_free(Expression *expr)
 {
     if (!expr)
-        return expr;
+        return;
     switch (expr->type)
     {
     case EXPR_LITERAL:

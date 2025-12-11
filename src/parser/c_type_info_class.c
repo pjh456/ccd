@@ -65,7 +65,7 @@ void complete_struct_type(CTypeInfo *cti, Vector *fields)
     cti->align = max_align;
 }
 
-CTypeInfo *make_union_type_type(Vector *fields)
+CTypeInfo *make_union_type(Vector *fields)
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
     cti->type = CT_UNION;

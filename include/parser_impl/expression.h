@@ -1,7 +1,9 @@
 #pragma once
 
 #include "../tokenizer_impl/token.h"
-#include "c_type_info.h"
+
+typedef struct CTypeInfo CTypeInfo;
+typedef struct Expression Expression;
 
 typedef enum
 {
@@ -28,7 +30,7 @@ typedef enum
     EXPR_UNKNOWN
 } ExprType;
 
-typedef struct
+struct Expression
 {
     ExprType type;
     Token token;
@@ -112,7 +114,7 @@ typedef struct
             int count;
         } comma;
     };
-} Expression;
+};
 
 Expression *make_literal(CTypeInfo *cti, void *data);
 

@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void build_literal(CTypeInfo *cti, void *data)
+Expression *make_literal(CTypeInfo *cti, void *data)
 {
     if (!cti)
         return NULL;
@@ -55,10 +55,11 @@ void build_literal(CTypeInfo *cti, void *data)
         build_float_literal(expr, *((float *)data));
         break;
     case CT_DOUBLE:
-        if ((cti->modifiers & CTM_LONG))
+        if ((cti->modifiers & CTM_LONG) != 0)
             build_long_double_literal(expr, *((long double *)data));
         else
             build_double_literal(expr, *((double *)data));
+        break;
     case CT_UNKNOWN: // 将其视为 string
         build_string_literal(expr, (char *)data);
         break;
@@ -67,80 +68,106 @@ void build_literal(CTypeInfo *cti, void *data)
         return NULL;
     }
 
-    expr->type = cti->type;
-
-    return;
+    return expr;
 }
 
 void build_signed_char_literal(Expression *expr, signed char value)
 {
+    if (!expr || expr->type != EXPR_LITERAL)
+        return;
     expr->literal.data.signed_char_v = value;
 }
 
 void build_unsigned_char_literal(Expression *expr, unsigned char value)
 {
+    if (!expr || expr->type != EXPR_LITERAL)
+        return;
     expr->literal.data.unsigned_char_v = value;
 }
 
 void build_signed_short_literal(Expression *expr, signed short value)
 {
+    if (!expr || expr->type != EXPR_LITERAL)
+        return;
     expr->literal.data.signed_short_v = value;
 }
 
 void build_unsigned_short_literal(Expression *expr, unsigned short value)
 {
+    if (!expr || expr->type != EXPR_LITERAL)
+        return;
     expr->literal.data.unsigned_short_v = value;
 }
 
 void build_signed_int_literal(Expression *expr, signed int value)
 {
+    if (!expr || expr->type != EXPR_LITERAL)
+        return;
     expr->literal.data.signed_int_v = value;
 }
 
 void build_unsigned_int_literal(Expression *expr, unsigned int value)
 {
+    if (!expr || expr->type != EXPR_LITERAL)
+        return;
     expr->literal.data.unsigned_int_v = value;
 }
 
 void build_signed_long_literal(Expression *expr, signed long value)
 {
+    if (!expr || expr->type != EXPR_LITERAL)
+        return;
     expr->literal.data.signed_long_v = value;
 }
 
 void build_unsigned_long_literal(Expression *expr, unsigned long value)
 {
+    if (!expr || expr->type != EXPR_LITERAL)
+        return;
     expr->literal.data.unsigned_long_v = value;
 }
 
 void build_signed_long_long_literal(Expression *expr, signed long long value)
 {
+    if (!expr || expr->type != EXPR_LITERAL)
+        return;
     expr->literal.data.signed_long_long_v = value;
 }
 
 void build_unsigned_long_long_literal(Expression *expr, unsigned long long value)
 {
+    if (!expr || expr->type != EXPR_LITERAL)
+        return;
     expr->literal.data.unsigned_long_long_v = value;
 }
 
 void build_float_literal(Expression *expr, float value)
 {
+    if (!expr || expr->type != EXPR_LITERAL)
+        return;
     expr->literal.data.float_v = value;
 }
 
 void build_double_literal(Expression *expr, double value)
 {
+    if (!expr || expr->type != EXPR_LITERAL)
+        return;
     expr->literal.data.double_v = value;
 }
 
 void build_long_double_literal(Expression *expr, long double value)
 {
+    if (!expr || expr->type != EXPR_LITERAL)
+        return;
     expr->literal.data.long_double_v = value;
 }
 
 void build_string_literal(Expression *expr, char *value)
 {
+    if (!expr || expr->type != EXPR_LITERAL)
+        return;
     expr->literal.data.string_v = malloc(strlen(value) + 1);
-    strcmp(expr->literal.data.string_v, value);
+    strcpy(expr->literal.data.string_v, value);
 }
 
 void expression_literal_free(Expression *expr)
