@@ -48,3 +48,12 @@ void expression_call_free(Expression *expr)
     }
     free(expr);
 }
+
+void expression_sizeof_free(Expression *expr)
+{
+    if (!expr || expr->type != EXPR_CALL)
+        return;
+    c_type_info_free(expr->type_info);
+    expression_free(expr->sizeof_call.expr);
+    free(expr);
+}
