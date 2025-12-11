@@ -6,10 +6,7 @@ typedef enum
 {
     CT_VOID,
     CT_CHAR,
-    CT_SHORT,
     CT_INT,
-    CT_LONG,
-    CT_LONGLONG,
     CT_FLOAT,
     CT_DOUBLE,
 
@@ -19,67 +16,136 @@ typedef enum
 
     CT_STRUCT,
     CT_UNION,
-    CT_ENUM
+    CT_ENUM,
+
+    CT_UNKNOWN
 } CType;
 
+typedef enum
+{
+    CTS_NONE = 0,
+    CTS_EXTERN = 1 << 0,
+    CTS_STATIC = 1 << 1,
+    CTS_REGISTER = 1 << 2
+} CTypeStorage;
+
+typedef enum
+{
+    FS_NONE = 0,
+    FS_INLINE = 1 << 0,
+    FS_NORETURN = 1 << 1
+} CFuncSpecifier;
+
+typedef enum
+{
+    CTQ_NONE = 0,
+    CTQ_CONST = 1 << 0,
+    CTQ_VOLATILE = 1 << 1,
+    CTQ_RETRICT = 1 << 2,
+} CTypeQualitifier;
+
+typedef enum
+{
+    CTM_SIGNED = 0,
+    CTM_UNSIGNED = 1 << 0,
+    CTM_SHORT = 1 << 1,
+    CTM_LONG = 1 << 2,
+    CTM_LONGLONG = 1 << 3
+} CTypeModifier;
+
+typedef struct Vector Vector;
 typedef struct CTypeInfo CTypeInfo;
+
+typedef struct Param
+{
+    char *name;
+    CTypeInfo *type;
+} Param;
+
+typedef struct Field
+{
+    char *name;
+    CTypeInfo *type;
+    size_t offset;
+} Field;
+
+typedef struct EnumItem
+{
+    char *name;
+    long long value;
+} EnumItem;
 
 struct CTypeInfo
 {
-    CType kind;
+    CType type;
+
+    unsigned storages;
+    unsigned func_specifiers;
+    unsigned qualifiers;
+    unsigned modifiers;
 
     size_t size; // 以字节为单位
     size_t align;
 
     union
     {
-        // pointer
         struct
         {
             CTypeInfo *base;
         } pointer;
 
-        // array
         struct
         {
             CTypeInfo *base;
             size_t length;
         } array;
 
-        // function
         struct
         {
             CTypeInfo *return_type;
-            CTypeInfo **params;
-            int param_count;
+            Vector *params; // Params
             int is_variadic;
         } func;
 
         // struct / union
         struct
         {
-            struct Field
-            {
-                char *name;
-                CTypeInfo *type;
-                int offset;
-            } *fields;
-            int field_count;
-
-            // 用于标识完整/不完整类型
             int is_complete;
+            Vector *fields; // Fields
         } record;
 
         // enum
         struct
         {
-            // enum 本质是 int，但保留符号表也有用
-            struct EnumItem
-            {
-                char *name;
-                long long value;
-            } *items;
-            int item_count;
+            int is_complete;
+            Vector *items; // EnumItem
         } enum_type;
     };
 };
+
+CTypeInfo *make_void(unsigned storages);
+CTypeInfo *make_char(unsigned storages, unsigned qualifiers, unsigned modifiers);
+CTypeInfo *make_int(unsigned storages, unsigned qualifiers, unsigned modifiers);
+CTypeInfo *make_float(unsigned storages, unsigned qualifiers);
+CTypeInfo *make_double(unsigned storages, unsigned qualifiers, unsigned modifiers);
+
+CTypeInfo *make_pointer(CTypeInfo *base);
+CTypeInfo *make_array(CTypeInfo *base, size_t len);
+CTypeInfo *make_function(CTypeInfo *ret, Vector *params, int is_var);
+
+CTypeInfo *make_struct(Vector *fields);
+void complete_struct(CTypeInfo *cti, Vector *fields);
+CTypeInfo *make_union(Vector *fields);
+void complete_union(CTypeInfo *cti, Vector *fields);
+CTypeInfo *make_enum(Vector *items);
+void complete_enum(CTypeInfo *cti, Vector *items);
+
+Param *make_param(char *name, CTypeInfo *type);
+Field *make_field(char *name, CTypeInfo *type, size_t offset);
+EnumItem *make_enum_item(char *name, long long val);
+
+void c_type_info_free(CTypeInfo *cti);
+
+char *c_type_name(CType ct);
+
+void print_c_type_info(CTypeInfo *cti);

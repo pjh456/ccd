@@ -1,132 +1,137 @@
-#pragma once
+// #pragma once
 
-#include "declaration.h"
+// #include "declaration.h"
+// #include "../vector.h"
 
-typedef struct Statement Statement;
+// typedef struct Statement Statement;
 
-typedef enum
-{
-    STMT_COMPOUND, // { ... }
-    STMT_EXPR,     // expression;
-    STMT_DECL,     // int a, b;
+// typedef enum
+// {
+//     STMT_COMPOUND, // { ... }
 
-    STMT_IF,       // if (...) ... else ...
-    STMT_WHILE,    // while (...)
-    STMT_DO_WHILE, // do ... while
-    STMT_FOR,      // for(...)
+//     STMT_EXPR,    // expression;
+//     STMT_DECL,    // int a, b;
+//     STMT_TYPEDEF, // typedef ..
 
-    STMT_BREAK,
-    STMT_CONTINUE,
-    STMT_RETURN, // return expr;
+//     STMT_IF,       // if (...) ... else ...
+//     STMT_WHILE,    // while (...)
+//     STMT_DO_WHILE, // do ... while
+//     STMT_FOR,      // for(...)
 
-    STMT_SWITCH,
-    STMT_CASE,
-    STMT_DEFAULT,
+//     STMT_BREAK,
+//     STMT_CONTINUE,
+//     STMT_RETURN, // return expr;
 
-    STMT_LABEL, // foo: ...
-    STMT_GOTO
-} StatementType;
+//     STMT_SWITCH,
+//     STMT_CASE,
+//     STMT_DEFAULT,
 
-struct Statement
-{
-    StatementType kind;
+//     STMT_LABEL, // foo: ...
+//     STMT_GOTO
+// } StatementType;
 
-    union
-    {
-        // 1. 复合语句 { ... }
-        struct
-        {
-            Statement **stmts;
-            int stmt_count;
-        } compound;
+// struct Statement
+// {
+//     StatementType type;
 
-        // 2. 表达式语句
-        struct
-        {
-            Expression *expr; // 可为 NULL (如 ";")
-        } expr_stmt;
+//     union
+//     {
+//         // 1. 复合语句 { ... }
+//         struct
+//         {
+//             Vector *stmts; // Statements
+//         } compound;
 
-        // 3. 声明语句（变量声明）
-        struct
-        {
-            Declaration **decls;
-            int decl_count;
-        } decl;
+//         // 2. 表达式语句
+//         struct
+//         {
+//             Expression *expr; // 可为 NULL (如 ";")
+//         } expr_stmt;
 
-        // 4. if (...) ... else ...
-        struct
-        {
-            Expression *cond;
-            Statement *then_branch;
-            Statement *else_branch;
-        } if_stmt;
+//         // 3. 声明语句（变量声明）
+//         struct
+//         {
+//             Vector *decls; // Declarations
+//         } decl;
 
-        // 5. while (...)
-        struct
-        {
-            Expression *cond;
-            Statement *body;
-        } while_stmt;
+//         // 4. if (...) ... else ...
+//         struct
+//         {
+//             Expression *cond;
+//             Statement *then_branch;
+//             Statement *else_branch;
+//         } if_stmt;
 
-        // 6. do ... while
-        struct
-        {
-            Statement *body;
-            Expression *cond;
-        } do_while_stmt;
+//         // 5. while (...)
+//         struct
+//         {
+//             Expression *cond;
+//             Statement *body;
+//         } while_stmt;
 
-        // 7. for (...)
-        struct
-        {
-            Statement *init;  // 可以是 decl 或 expr 或 NULL
-            Expression *cond; // NULL 表示 true
-            Expression *post; // NULL 表示无
-            Statement *body;
-        } for_stmt;
+//         // 6. do ... while
+//         struct
+//         {
+//             Statement *body;
+//             Expression *cond;
+//         } do_while_stmt;
 
-        // 8. return expr
-        struct
-        {
-            Expression *expr; // 可为 NULL
-        } return_stmt;
+//         // 7. for (...)
+//         struct
+//         {
+//             Statement *init;  // 可以是 decl 或 expr 或 NULL
+//             Expression *cond; // NULL 表示 true
+//             Expression *post; // NULL 表示无
+//             Statement *body;
+//         } for_stmt;
 
-        // 9. break / continue
-        struct
-        {
-            int dummy;
-        } jump_stmt;
+//         // 8. return expr
+//         struct
+//         {
+//             Expression *expr; // 可为 NULL
+//         } return_stmt;
 
-        // 10. switch(expr) { ... }
-        struct
-        {
-            Expression *expr;
-            Statement *body;
-        } switch_stmt;
+//         // 9. break / continue
+//         struct
+//         {
+//             int dummy;
+//         } jump_stmt;
 
-        // 11. case n: ...
-        struct
-        {
-            long long value;
-            Statement *body;
-        } case_stmt;
+//         // 10. switch(expr) { ... }
+//         struct
+//         {
+//             Expression *expr;
+//             Statement *body;
+//         } switch_stmt;
 
-        // 12. default: ...
-        struct
-        {
-            Statement *body;
-        } default_stmt;
+//         // 11. case n: ...
+//         struct
+//         {
+//             long long value;
+//             Statement *body;
+//         } case_stmt;
 
-        // 13. label: ...
-        struct
-        {
-            char *label_name;
-            Statement *stmt;
-        } label_stmt;
+//         // 12. default: ...
+//         struct
+//         {
+//             Statement *body;
+//         } default_stmt;
 
-        // 14. goto label;
-        struct
-        {
-            char *label_name;
-        } goto_stmt;
-    };
-};
+//         // 13. label: ...
+//         struct
+//         {
+//             char *label_name;
+//             Statement *stmt;
+//         } label_stmt;
+
+//         // 14. goto label;
+//         struct
+//         {
+//             char *label_name;
+//         } goto_stmt;
+//     };
+// };
+
+// Statement *statement_new(StatementType st);
+
+// void statement_free(Statement *stmt);
