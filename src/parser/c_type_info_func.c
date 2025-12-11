@@ -2,10 +2,13 @@
 #include "parser_impl/c_type_info_impl.h"
 #include "vector.h"
 #include <stdlib.h>
+#include <string.h>
 
 CTypeInfo *make_function_type(CTypeInfo *ret, Vector *params, int is_var)
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
+    memset(cti, 0, sizeof(*cti));
+
     cti->type = CT_FUNCTION;
     cti->func.return_type = ret;
     cti->func.params = params;

@@ -1,6 +1,7 @@
 #include "parser_impl/c_type_info.h"
 #include "parser_impl/c_type_info_impl.h"
 #include <stdlib.h>
+#include <string.h>
 
 CTypeInfo *make_void_type(unsigned storages)
 {
@@ -14,6 +15,8 @@ CTypeInfo *make_void_type(unsigned storages)
 CTypeInfo *make_char_type(unsigned storages, unsigned qualifiers, unsigned modifiers)
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
+    memset(cti, 0, sizeof(*cti));
+
     cti->type = CT_CHAR;
     cti->storages = storages;
     cti->qualifiers = qualifiers;
@@ -32,6 +35,8 @@ CTypeInfo *make_char_type(unsigned storages, unsigned qualifiers, unsigned modif
 CTypeInfo *make_int_type(unsigned storages, unsigned qualifiers, unsigned modifiers)
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
+    memset(cti, 0, sizeof(*cti));
+
     cti->type = CT_INT;
     cti->storages = storages;
     cti->qualifiers = qualifiers;
@@ -75,9 +80,10 @@ CTypeInfo *make_int_type(unsigned storages, unsigned qualifiers, unsigned modifi
 }
 
 CTypeInfo *make_float_type(unsigned storages, unsigned qualifiers)
-
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
+    memset(cti, 0, sizeof(*cti));
+
     cti->type = CT_FLOAT;
     cti->storages = storages;
     cti->qualifiers = qualifiers;
@@ -88,6 +94,8 @@ CTypeInfo *make_float_type(unsigned storages, unsigned qualifiers)
 CTypeInfo *make_double_type(unsigned storages, unsigned qualifiers, unsigned modifiers)
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
+    memset(cti, 0, sizeof(*cti));
+
     cti->type = CT_DOUBLE;
     cti->storages = storages;
     cti->qualifiers = qualifiers;

@@ -2,10 +2,12 @@
 #include "parser_impl/c_type_info_impl.h"
 #include "vector.h"
 #include <stdlib.h>
+#include <string.h>
 
 CTypeInfo *make_struct_type(Vector *fields)
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
+    memset(cti, 0, sizeof(*cti));
     cti->type = CT_STRUCT;
 
     if (!fields)
@@ -68,6 +70,7 @@ void complete_struct_type(CTypeInfo *cti, Vector *fields)
 CTypeInfo *make_union_type(Vector *fields)
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
+    memset(cti, 0, sizeof(*cti));
     cti->type = CT_UNION;
 
     if (!fields)
@@ -126,6 +129,7 @@ void complete_union_type(CTypeInfo *cti, Vector *fields)
 CTypeInfo *make_enum_type(Vector *items)
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
+    memset(cti, 0, sizeof(*cti));
     cti->type = CT_ENUM;
 
     if (!items)

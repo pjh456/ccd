@@ -10,6 +10,8 @@ Expression *make_expression_literal(CTypeInfo *cti, void *data)
         return NULL;
 
     Expression *expr = malloc(sizeof(*expr));
+    memset(expr, 0, sizeof(*expr));
+
     expr->type_info = cti;
     expr->type = EXPR_LITERAL;
 

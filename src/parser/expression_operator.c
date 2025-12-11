@@ -2,12 +2,15 @@
 #include "parser_impl/c_type_info.h"
 #include "parser_impl/expression_operator_impl.h"
 #include <stdlib.h>
+#include <string.h>
 
 Expression *make_expression_unary(UnaryOperator op, Expression *expr, int is_prefix)
 {
     if (!expr)
         return NULL;
     Expression *unary = malloc(sizeof(*unary));
+    memset(unary, 0, sizeof(*unary));
+
     if (op == OP_NOT)
         unary->type_info = make_char_type(CTS_NONE, CTQ_NONE, CTM_SIGNED);
     else
@@ -25,6 +28,8 @@ Expression *make_expression_binary(BinaryOperator op, Expression *lhs, Expressio
     if (!lhs || !rhs)
         return NULL;
     Expression *binary = malloc(sizeof(*binary));
+    memset(binary, 0, sizeof(*binary));
+
     binary->type_info = c_type_info_copy(lhs->type_info);
     binary->type = EXPR_BINARY;
 

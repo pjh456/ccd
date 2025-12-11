@@ -9,6 +9,8 @@ Expression *make_expression_identifier(char *name)
     if (!name)
         return NULL;
     Expression *expr = malloc(sizeof(*expr));
+    memset(expr, 0, sizeof(*expr));
+
     expr->type_info = NULL; // 等查变量表的时候才有类型
     expr->type = EXPR_IDENTIFIER;
 
@@ -22,6 +24,8 @@ Expression *make_expression_cast(CTypeInfo *cti, Expression *expr)
     if (!expr || !cti)
         return NULL;
     Expression *cast = malloc(sizeof(*cast));
+    memset(cast, 0, sizeof(*cast));
+
     cast->type_info = cti;
     cast->type = EXPR_CAST;
 
@@ -35,6 +39,8 @@ Expression *make_expression_assign(AssignOperator op, Expression *lhs, Expressio
     if (!lhs || !rhs)
         return NULL;
     Expression *assign = malloc(sizeof(*assign));
+    memset(assign, 0, sizeof(*assign));
+
     assign->type_info = c_type_info_copy(lhs->type_info);
     assign->type = EXPR_ASSIGN;
 

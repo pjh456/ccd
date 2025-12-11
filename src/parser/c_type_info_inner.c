@@ -7,6 +7,8 @@
 Param *make_param_type(char *name, CTypeInfo *type)
 {
     Param *param = malloc(sizeof(*param));
+    memset(param, 0, sizeof(*param));
+
     if (name)
     {
         param->name = malloc(strlen(name) + 1);
@@ -21,11 +23,15 @@ Param *make_param_type(char *name, CTypeInfo *type)
 Field *make_field_type(char *name, CTypeInfo *type, size_t offset)
 {
     Field *field = malloc(sizeof(*field));
+    memset(field, 0, sizeof(*field));
+
     if (name)
     {
         field->name = malloc(strlen(name) + 1);
         strcpy(field->name, name);
     }
+    else
+        field->name = NULL;
     field->type = type;
     field->offset = offset;
     return field;
@@ -37,6 +43,8 @@ EnumItem *make_enum_item_type(char *name, long long val)
         return NULL;
 
     EnumItem *item = malloc(sizeof(*item));
+    memset(item, 0, sizeof(*item));
+
     item->name = malloc(strlen(name) + 1);
     strcpy(item->name, name);
     item->value = val;

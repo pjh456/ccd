@@ -1,6 +1,7 @@
 #include "parser_impl/c_type_info.h"
 #include "parser_impl/c_type_info_impl.h"
 #include "vector.h"
+#include "utils.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -67,6 +68,48 @@ void c_type_info_free(CTypeInfo *cti)
     }
 }
 
+void print_c_type_info_storages(unsigned s)
+{
+    if (s & CTS_EXTERN)
+        printf(" extern");
+    if (s & CTS_STATIC)
+        printf(" static");
+    if (s & CTS_REGISTER)
+        printf(" register");
+}
+
+void print_c_type_info_func_specifiers(unsigned fs)
+{
+    if (fs & FS_INLINE)
+        printf(" inline");
+    if (fs & FS_NORETURN)
+        printf(" noreturn");
+}
+
+void print_c_type_info_qualifiers(unsigned q)
+{
+    if (q & CTQ_CONST)
+        printf(" const");
+    if (q & CTQ_VOLATILE)
+        printf(" volatile");
+    if (q & CTQ_RETRICT)
+        printf(" restrict");
+}
+
+void print_c_type_info_modifiers(unsigned mods)
+{
+    if (mods & CTM_UNSIGNED)
+        printf(" unsigned");
+    if (mods & CTM_SIGNED)
+        printf(" signed");
+    if (mods & CTM_SHORT)
+        printf(" short");
+    if (mods & CTM_LONG)
+        printf(" long");
+    if (mods & CTM_LONGLONG)
+        printf(" long long");
+}
+
 char *c_type_name(CType ct)
 {
     switch (ct)
@@ -108,113 +151,148 @@ void print_c_type_info_impl(CTypeInfo *cti, int indent)
 {
     if (!cti)
     {
-        printf("%*s<null type>\n", indent, "");
+        print_indent(indent);
+        printf("<null type>\n");
         return;
     }
 
-    const char *name = c_type_name(cti->type);
+    print_indent(indent);
+    printf("Type: %s\n", c_type_name(cti->type));
 
-    printf("%*s%s", indent, "", name);
+    print_indent(indent);
+    printf("Size: %zu, Align: %zu\n", cti->size, cti->align);
+
+    if (cti->storages)
+    {
+        print_indent(indent);
+        printf("Storage:");
+        print_c_type_info_storages(cti->storages);
+        printf("\n");
+    }
+    if (cti->qualifiers)
+    {
+        print_indent(indent);
+        printf("Qualifiers:");
+        print_c_type_info_qualifiers(cti->qualifiers);
+        printf("\n");
+    }
+    if (cti->modifiers)
+    {
+        print_indent(indent);
+        printf("Modifiers:");
+        print_c_type_info_modifiers(cti->modifiers);
+        printf("\n");
+    }
+    if (cti->func_specifiers)
+    {
+        print_indent(indent);
+        printf("Func-specifiers:");
+        print_c_type_info_func_specifiers(cti->func_specifiers);
+        printf("\n");
+    }
 
     switch (cti->type)
     {
-    case CT_VOID:
-    case CT_CHAR:
-    case CT_INT:
-    case CT_FLOAT:
-    case CT_DOUBLE:
-        printf(" (size=%zu, align=%zu)\n", cti->size, cti->align);
-        break;
     case CT_POINTER:
-        printf(" to\n");
+        print_indent(indent);
+        printf("Pointer to:\n");
         print_c_type_info_impl(cti->pointer.base, indent + 4);
         break;
+
     case CT_ARRAY:
-        printf(" [%zu]\n", cti->array.length);
-        printf("%*sof element:\n", indent + 2, "");
+        print_indent(indent);
+        printf("Array length: %zu\n", cti->array.length);
+        print_indent(indent);
+        printf("Element type:\n");
         print_c_type_info_impl(cti->array.base, indent + 4);
-        printf("%*s(size=%zu, align=%zu)\n", indent + 2, "",
-               cti->size, cti->align);
         break;
+
     case CT_FUNCTION:
-        printf(" (function)\n");
-        printf("%*sreturn:\n", indent + 2, "");
-        print_c_type_info_impl(cti->func.return_type, indent + 4);
-        printf("%*sparams:\n", indent + 2, "");
+    {
+        print_indent(indent);
+        printf("Function:\n");
+
+        print_indent(indent + 4);
+        printf("Return type:\n");
+        print_c_type_info_impl(cti->func.return_type, indent + 8);
+
+        print_indent(indent + 4);
+        printf("Parameters:\n");
+
         if (!cti->func.params || cti->func.params->size == 0)
-            printf("%*s<none>\n", indent + 4, "");
+        {
+            print_indent(indent + 8);
+            printf("(none)\n");
+        }
         else
         {
-            for (size_t i = 0; i < cti->func.params->size; ++i)
+            for (size_t i = 0; i < cti->func.params->size; i++)
             {
                 Param *p = *((Param **)vector_get(cti->func.params, i));
-                printf("%*s%s\n", indent + 4, "", (p->name ? p->name : "<anonymous>"));
-                print_c_type_info_impl(p->type, indent + 6);
+                print_indent(indent + 8);
+                printf("Param %zu: %s\n", i, p->name ? p->name : "<anonymous>");
+                print_c_type_info_impl(p->type, indent + 12);
             }
         }
+
         if (cti->func.is_variadic)
-            printf("%*s...\n", indent + 4, "");
+        {
+            print_indent(indent + 4);
+            printf("Variadic: yes\n");
+        }
         break;
+    }
 
     case CT_STRUCT:
-        printf(" {\n");
-        if (cti->record.is_complete)
-        {
-            Vector *fields = cti->record.fields;
-            for (size_t i = 0; i < fields->size; ++i)
-            {
-                Field *f = *((Field **)vector_get(fields, i));
-                printf("%*s%s @ offset=%zu\n", indent + 2, "", f->name, f->offset);
-                print_c_type_info_impl(f->type, indent + 4);
-            }
-        }
-        else
-        {
-            printf("%*s<incomplete>\n", indent + 2, "");
-        }
-        printf("%*s} (size=%zu, align=%zu)\n", indent, "",
-               cti->size, cti->align);
-        break;
-
     case CT_UNION:
-        printf(" {\n");
-        if (cti->record.is_complete)
-        {
-            Vector *fields = cti->record.fields;
-            for (size_t i = 0; i < fields->size; ++i)
-            {
-                Field *f = *((Field **)vector_get(fields, i));
-                printf("%*s%s @ offset=0\n", indent + 2, "", f->name);
-                print_c_type_info_impl(f->type, indent + 4);
-            }
-        }
-        else
-            printf("%*s<incomplete>\n", indent + 2, "");
+    {
+        print_indent(indent);
+        printf("Record (%s), complete=%d\n",
+               cti->type == CT_STRUCT ? "struct" : "union",
+               cti->record.is_complete);
 
-        printf("%*s} (size=%zu, align=%zu)\n", indent, "",
-               cti->size, cti->align);
+        if (!cti->record.fields)
+        {
+            print_indent(indent + 4);
+            printf("(no fields)\n");
+            break;
+        }
+
+        for (size_t i = 0; i < cti->record.fields->size; i++)
+        {
+            Field *f = *((Field **)vector_get(cti->record.fields, i));
+
+            print_indent(indent + 4);
+            printf("Field %zu: %s, offset=%zu\n",
+                   i, f->name ? f->name : "<anonymous>", f->offset);
+
+            print_c_type_info_impl(f->type, indent + 8);
+        }
         break;
+    }
 
     case CT_ENUM:
-        printf(" {\n");
-        if (cti->enum_type.items)
-        {
-            Vector *items = cti->enum_type.items;
-            for (size_t i = 0; i < items->size; ++i)
-            {
-                EnumItem *it = *((EnumItem **)vector_get(items, i));
-                printf("%*s%s = %lld\n", indent + 2, "", it->name, it->value);
-            }
-        }
-        else
-            printf("%*s<incomplete>\n", indent + 2, "");
+    {
+        print_indent(indent);
+        printf("Enum, complete=%d\n", cti->enum_type.is_complete);
 
-        printf("%*s} (size=%zu, align=%zu)\n", indent, "",
-               cti->size, cti->align);
+        if (!cti->enum_type.items)
+        {
+            print_indent(indent + 4);
+            printf("(no enumerators)\n");
+            break;
+        }
+
+        for (size_t i = 0; i < cti->enum_type.items->size; i++)
+        {
+            EnumItem *it = *((EnumItem **)vector_get(cti->enum_type.items, i));
+            print_indent(indent + 4);
+            printf("%s = %lld\n", it->name, it->value);
+        }
         break;
+    }
 
     default:
-        printf(" <unknown type>\n");
         break;
     }
 }
