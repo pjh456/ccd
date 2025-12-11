@@ -181,6 +181,7 @@ Expression *make_expression_identifier(char *name);
 Expression *make_expression_cast(CTypeInfo *cti, Expression *expr);
 Expression *make_expression_assign(AssignOperator op, Expression *lhs, Expression *rhs);
 Expression *make_expression_unary(UnaryOperator op, Expression *expr, int is_prefix);
+Expression *make_expression_binary(BinaryOperator op, Expression *lhs, Expression *rhs);
 
 void expression_free(Expression *expr);
 
