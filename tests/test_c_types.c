@@ -15,10 +15,15 @@ static void test_base_types()
     CTypeInfo *t5 = make_double_type(CTS_EXTERN, CTQ_VOLATILE, CTM_LONGLONG);
 
     print_c_type_info(t1);
+    puts("");
     print_c_type_info(t2);
+    puts("");
     print_c_type_info(t3);
+    puts("");
     print_c_type_info(t4);
+    puts("");
     print_c_type_info(t5);
+    puts("");
 
     c_type_info_free(t1);
     c_type_info_free(t2);
@@ -35,8 +40,11 @@ static void test_pointer_and_array()
     CTypeInfo *arr10ptr = make_array_type(make_pointer_type(make_int_type(CTS_NONE, CTQ_NONE, CTM_SIGNED)), 10);
 
     print_c_type_info(ptr);
+    puts("");
     print_c_type_info(arr5);
+    puts("");
     print_c_type_info(arr10ptr);
+    puts("");
 
     c_type_info_free(arr10ptr);
     c_type_info_free(arr5);
@@ -59,6 +67,7 @@ static void test_function_type()
     CTypeInfo *fn = make_function_type(ret, params, 0);
 
     print_c_type_info(fn);
+    puts("");
 
     c_type_info_free(fn);
 }
@@ -79,9 +88,11 @@ static void test_struct()
 
     CTypeInfo *s = make_struct_type(NULL);
     print_c_type_info(s);
+    puts("");
 
     complete_struct_type(s, fields);
     print_c_type_info(s);
+    puts("");
 
     c_type_info_free(s);
 }
@@ -92,7 +103,7 @@ static void test_union()
 
     Vector *fields = vector_new(sizeof(Field *));
 
-    Field *a = make_field_type("u1", make_int_type(CTS_NONE, CTQ_NONE, CTM_SIGNED), 0);
+    Field *a = make_field_type("u1", make_int_type(CTS_REGISTER, CTQ_VOLATILE, CTM_SIGNED), 0);
     Field *b = make_field_type("u2", make_double_type(CTS_NONE, CTQ_NONE, 0), 0);
 
     vector_push_back(fields, &a);
@@ -100,9 +111,11 @@ static void test_union()
 
     CTypeInfo *u = make_union_type(NULL);
     print_c_type_info(u);
+    puts("");
 
     complete_union_type(u, fields);
     print_c_type_info(u);
+    puts("");
 
     c_type_info_free(u);
 }
@@ -123,9 +136,11 @@ static void test_enum()
 
     CTypeInfo *e = make_enum_type(NULL);
     print_c_type_info(e);
+    puts("");
 
     complete_enum_type(e, items);
     print_c_type_info(e);
+    puts("");
 
     c_type_info_free(e);
 }
