@@ -86,7 +86,7 @@ int vector_pop_back(Vector *vec)
  */
 void *vector_get(Vector *vec, size_t idx)
 {
-    if (idx > vec->size)
+    if (idx >= vec->size)
         return NULL;
     return (char *)vec->data + idx * vec->ele_size;
 }
