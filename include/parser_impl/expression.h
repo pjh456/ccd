@@ -31,6 +31,9 @@ typedef enum
     OP_NOT,   // ! (逻辑非)
     OP_TILDE, // ~ (按位取反)
 
+    // 数字运算
+    OP_NEG, // 取反
+
     // === 自增自减 ===
     OP_INC, // ++
     OP_DEC, // --
