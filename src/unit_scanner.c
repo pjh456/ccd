@@ -22,8 +22,8 @@ void unit_scanner_free(UnitScanner *us)
     free(us);
 }
 
-Token *peek_token(UnitScanner *us) { return vector_get(us->tokens, us->pos); }
-Token *next_token(UnitScanner *us) { return vector_get(us->tokens, us->pos++); }
+Token *peek_token(UnitScanner *us) { return (Token *)vector_get(us->tokens, us->pos); }
+Token *next_token(UnitScanner *us) { return (Token *)vector_get(us->tokens, us->pos++); }
 
 StatementUnit *scan_unit(UnitScanner *us)
 {
@@ -88,4 +88,60 @@ StatementUnit *scan_unit(UnitScanner *us)
 
 StatementUnit *scan_identifier(UnitScanner *us)
 {
+    if (!us)
+        return NULL;
+    if (peek_token(us)->type != T_IDENTIFIER)
+        return NULL;
+
+    Token *t = (Token *)vector_get(us->tokens, us->pos);
+    if (!t)
+        return NULL;
+
+    switch (t->type)
+    {
+    case T_COLON:
+        return scan_label(us);
+    case T_LEFT_PAREN:
+    case T_COMMA:
+        return scan_expression(us);
+    case T_AND:         // &
+    case T_OR:          // |
+    case T_XOR:         // ^
+    case T_LEFT_SHIFT:  // <<
+    case T_RIGHT_SHIFT: // >>
+
+    case T_PLUS:   // +
+    case T_MINUS:  // -
+    case T_STAR:   // *
+    case T_DIV:    // /
+    case T_MOD:    // %
+    case T_ASSIGN: // =
+
+    case T_LESS:          // <
+    case T_GREATER:       // >
+    case T_EQUAL:         // ==
+    case T_NOT_EQUAL:     // !=
+    case T_LESS_EQUAL:    // <=
+    case T_GREATER_EQUAL: // >=
+    case T_AND_AND:       // &&
+    case T_OR_OR:         // ||
+
+    case T_AND_ASSIGN:         // &=
+    case T_OR_ASSIGN:          // |=
+    case T_XOR_ASSIGN:         // ^=
+    case T_LEFT_SHIFT_ASSIGN:  // <<=
+    case T_RIGHT_SHIFT_ASSIGN: // <<=
+
+    case T_PLUS_ASSIGN:  // +=
+    case T_MINUS_ASSIGN: // -=
+    case T_MUL_ASSIGN:   // *=
+    case T_DIV_ASSIGN:   // /=
+    case T_MOD_ASSIGN:   // %=
+
+    case T_INC: // ++
+    case T_DEC: // --
+        return scan_expression(us);
+    default:
+        return NULL;
+    }
 }
