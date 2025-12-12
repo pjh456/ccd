@@ -16,8 +16,7 @@ Expression *expression_copy(Expression *expr)
 {
     if (!expr)
         return NULL;
-    Expression *copied_expr = malloc(sizeof(*copied_expr));
-    memcpy(copied_expr, expr, sizeof(*expr));
+    Expression *copied_expr = calloc(1, sizeof(*copied_expr));
     return copied_expr;
 }
 

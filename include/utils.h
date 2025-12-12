@@ -14,6 +14,8 @@ int consume_newline(Tokenizer *tk);
 
 void print_indent(int indent);
 
+char *str_clone(const char *str);
+
 #ifdef ENABLE_DEBUG
 #define DEBUG(...) fprintf(stderr, __VA_ARGS__)
 #else

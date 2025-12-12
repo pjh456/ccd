@@ -3,14 +3,12 @@
 #include "parser_impl/c_type_info.h"
 #include "vector.h"
 #include <stdlib.h>
-#include <string.h>
 
 Expression *make_expression_call(Expression *func, Vector *args)
 {
     if (!func)
         return NULL;
-    Expression *call = malloc(sizeof(*call));
-    memset(call, 0, sizeof(*call));
+    Expression *call = calloc(1, sizeof(*call));
 
     call->type_info = NULL; // 查函数表时再补全
     call->type = EXPR_CALL;
@@ -24,8 +22,7 @@ Expression *make_expression_sizeof(Expression *expr)
 {
     if (!expr)
         return NULL;
-    Expression *call = malloc(sizeof(*call));
-    memset(call, 0, sizeof(*call));
+    Expression *call = calloc(1, sizeof(*call));
 
     call->type_info = make_int_type(CTS_NONE, CTQ_NONE, CTM_UNSIGNED);
     call->type = EXPR_SIZEOF;

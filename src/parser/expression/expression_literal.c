@@ -1,16 +1,15 @@
 #include "parser_impl/expression.h"
 #include "parser_impl/expression_impl/expression_literal_impl.h"
 #include "parser_impl/c_type_info.h"
+#include "utils.h"
 #include <stdlib.h>
-#include <string.h>
 
 Expression *make_expression_literal(CTypeInfo *cti, void *data)
 {
     if (!cti)
         return NULL;
 
-    Expression *expr = malloc(sizeof(*expr));
-    memset(expr, 0, sizeof(*expr));
+    Expression *expr = calloc(1, sizeof(*expr));
 
     expr->type_info = cti;
     expr->type = EXPR_LITERAL;
@@ -168,8 +167,7 @@ void build_string_literal(Expression *expr, char *value)
 {
     if (!expr || expr->type != EXPR_LITERAL)
         return;
-    expr->literal.data.string_v = malloc(strlen(value) + 1);
-    strcpy(expr->literal.data.string_v, value);
+    expr->literal.data.string_v = str_clone(value);
 }
 
 void expression_literal_free(Expression *expr)

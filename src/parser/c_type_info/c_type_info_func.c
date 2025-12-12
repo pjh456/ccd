@@ -6,8 +6,7 @@
 
 CTypeInfo *make_function_type(CTypeInfo *ret, Vector *params, int is_var)
 {
-    CTypeInfo *cti = malloc(sizeof(*cti));
-    memset(cti, 0, sizeof(*cti));
+    CTypeInfo *cti = calloc(1, sizeof(*cti));
 
     cti->type = CT_FUNCTION;
     cti->func.return_type = ret;

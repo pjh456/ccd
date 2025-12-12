@@ -8,8 +8,7 @@ Expression *make_expression_unary(UnaryOperator op, Expression *expr, int is_pre
 {
     if (!expr)
         return NULL;
-    Expression *unary = malloc(sizeof(*unary));
-    memset(unary, 0, sizeof(*unary));
+    Expression *unary = calloc(1, sizeof(*unary));
 
     if (op == OP_NOT)
         unary->type_info = make_char_type(CTS_NONE, CTQ_NONE, CTM_SIGNED);
@@ -27,8 +26,7 @@ Expression *make_expression_binary(BinaryOperator op, Expression *lhs, Expressio
 {
     if (!lhs || !rhs)
         return NULL;
-    Expression *binary = malloc(sizeof(*binary));
-    memset(binary, 0, sizeof(*binary));
+    Expression *binary = calloc(1, sizeof(*binary));
 
     binary->type_info = c_type_info_copy(lhs->type_info);
     binary->type = EXPR_BINARY;

@@ -1,12 +1,10 @@
 #include "parser_impl/c_type_info.h"
 #include "parser_impl/c_type_info_impl/c_type_info_impl.h"
 #include <stdlib.h>
-#include <string.h>
 
 CTypeInfo *make_pointer_type(CTypeInfo *base)
 {
-    CTypeInfo *cti = malloc(sizeof(*cti));
-    memset(cti, 0, sizeof(*cti));
+    CTypeInfo *cti = calloc(1, sizeof(*cti));
 
     cti->type = CT_POINTER;
     cti->pointer.base = base;
@@ -16,8 +14,7 @@ CTypeInfo *make_pointer_type(CTypeInfo *base)
 
 CTypeInfo *make_array_type(CTypeInfo *base, size_t len)
 {
-    CTypeInfo *cti = malloc(sizeof(*cti));
-    memset(cti, 0, sizeof(*cti));
+    CTypeInfo *cti = calloc(1, sizeof(*cti));
 
     cti->type = CT_ARRAY;
     cti->array.base = base;

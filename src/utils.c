@@ -1,5 +1,7 @@
 #include "utils.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 int is_alpha(unsigned char ch) { return isalpha(ch) || ch == '_'; }
 int is_digit(unsigned char ch) { return ch >= '0' && ch <= '9'; }
@@ -27,4 +29,14 @@ void print_indent(int indent)
 {
     for (int i = 0; i < indent; i++)
         putchar(' ');
+}
+
+char *str_clone(const char *str)
+{
+    if (!str)
+        return NULL;
+    size_t len = strlen(str) + 1;
+    char *p = malloc(len);
+    memcpy(p, str, len);
+    return p;
 }
