@@ -136,9 +136,9 @@ StatementUnit *make_for_statement_unit(
     StatementUnit *step,
     StatementUnit *body);
 
-StatementUnit *make_continue_statement_unit();
-StatementUnit *make_break_statement_unit();
-StatementUnit *make_return_statement_unit();
+StatementUnit *make_continue_statement_unit(Vector *tokens);
+StatementUnit *make_break_statement_unit(Vector *tokens);
+StatementUnit *make_return_statement_unit(Vector *tokens, StatementUnit *expr);
 
 StatementUnit *make_label_statement_unit();
 StatementUnit *make_goto_statement_unit();
