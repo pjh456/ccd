@@ -16,7 +16,8 @@ Expression *expression_copy(Expression *expr)
 {
     if (!expr)
         return NULL;
-    Expression *copied_expr = calloc(1, sizeof(*copied_expr));
+    Expression *copied_expr = malloc(sizeof(*copied_expr));
+    memcpy(copied_expr, expr, sizeof(*expr));
     return copied_expr;
 }
 
@@ -47,8 +48,11 @@ void expression_free(Expression *expr)
     case EXPR_CALL:
         expression_call_free(expr);
         break;
-    case EXPR_SIZEOF:
-        expression_sizeof_free(expr);
+    case EXPR_SIZEOF_EXPR:
+        expression_sizeof_expr_free(expr);
+        break;
+    case EXPR_SIZEOF_TYPE:
+        expression_sizeof_type_free(expr);
         break;
     case EXPR_SUBSCRIPT:
         expression_subscript_free(expr);
@@ -93,8 +97,10 @@ static const char *expr_type_name(ExprType t)
         return "BinaryOp";
     case EXPR_CALL:
         return "Call";
-    case EXPR_SIZEOF:
-        return "Sizeof";
+    case EXPR_SIZEOF_EXPR:
+        return "SizeofExpression";
+    case EXPR_SIZEOF_TYPE:
+        return "SizeofType";
     case EXPR_SUBSCRIPT:
         return "Subscript";
     case EXPR_MEMBER:
@@ -315,9 +321,14 @@ void print_expression_impl(Expression *expr, int indent)
         break;
     }
 
-    case EXPR_SIZEOF:
+    case EXPR_SIZEOF_EXPR:
         printf("%*sexpr:\n", indent + 2, "");
-        print_expression_impl(expr->sizeof_call.expr, indent + 4);
+        print_expression_impl(expr->sizeof_expr.expr, indent + 4);
+        break;
+
+    case EXPR_SIZEOF_TYPE:
+        printf("%*sexpr:\n", indent + 2, "");
+        print_c_type_info_impl(expr->sizeof_type.type_info, indent + 4);
         break;
 
     case EXPR_SUBSCRIPT:
