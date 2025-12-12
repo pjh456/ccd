@@ -21,7 +21,7 @@ StatementUnit *make_expression_statement_unit(Vector *tokens)
     if (!tokens)
         return NULL;
     StatementUnit *unit = calloc(1, sizeof(*unit));
-    unit->type = SUT_DECL;
+    unit->type = SUT_EXPR;
 
     unit->tokens = tokens;
 
