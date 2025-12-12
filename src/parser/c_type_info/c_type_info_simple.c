@@ -6,6 +6,8 @@
 CTypeInfo *make_void_type(unsigned storages)
 {
     CTypeInfo *cti = malloc(sizeof(*cti));
+    memset(cti, 0, sizeof(*cti));
+
     cti->type = CT_VOID;
     cti->storages = storages;
     cti->size = 0, cti->align = 1;
