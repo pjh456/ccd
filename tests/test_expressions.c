@@ -81,7 +81,8 @@ int main()
     Expression *ptr_member = make_expression_ptr_member(expression_copy(id_p), make_expression_identifier("next"));
 
     // 10. sizeof
-    Expression *sizeof_expr = make_expression_sizeof(expression_copy(id_x));
+    Expression *sizeof_expr = make_expression_sizeof_expr(expression_copy(id_x));
+    Expression *sizeof_type = make_expression_sizeof_type(make_int_type(CTS_EXTERN, CTQ_RETRICT, CTM_UNSIGNED & CTM_LONGLONG));
 
     // 11. 函数调用
     Vector *call_args = make_args(expression_copy(id_x), expression_copy(lit_int), expression_copy(lit_float));
@@ -125,6 +126,7 @@ int main()
     TEST(ptr_member);
 
     TEST(sizeof_expr);
+    TEST(sizeof_type);
     TEST(call_expr);
     TEST(cond_expr);
     TEST(comma_expr);
