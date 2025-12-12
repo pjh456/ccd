@@ -11,7 +11,17 @@
 #include "vector.h"
 #include "utils.h"
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
+
+StatementUnit *statement_unit_copy(StatementUnit *unit)
+{
+    if (!unit)
+        return NULL;
+    StatementUnit *copied_unit = malloc(sizeof(*copied_unit));
+    memcpy(copied_unit, unit, sizeof(*unit));
+    return copied_unit;
+}
 
 void statement_unit_free(StatementUnit *unit)
 {
@@ -137,12 +147,30 @@ void print_tokens(Vector *tokens)
     for (size_t i = 0; i < tokens->size; ++i)
     {
         Token *t = vector_get(tokens, i);
-        printf("%.*s ", (int)(t->length), t->start);
+
+        // 打印: TYPE(text)
+        printf("%s(", token_name(t->type));
+        printf("%.*s", (int)t->length, t->start);
+        printf(") ");
     }
 }
 
 void print_statement_unit_impl(StatementUnit *unit, int indent)
 {
+    if (!unit)
+        return;
+
+    // 打印类型标题
+    print_indent(indent);
+    printf("[%s]", statement_unit_name(unit->type));
+
+    if (unit->tokens && unit->tokens->size > 0)
+    {
+        printf("  ");
+        print_tokens(unit->tokens);
+    }
+    printf("\n");
+
     switch (unit->type)
     {
     case SUT_COMPOUND:
@@ -152,7 +180,7 @@ void print_statement_unit_impl(StatementUnit *unit, int indent)
         {
             for (size_t i = 0; i < items->size; ++i)
             {
-                StatementUnit *child = vector_get(items, i);
+                StatementUnit *child = *((StatementUnit **)vector_get(items, i));
                 print_statement_unit_impl(child, indent + 4);
             }
         }
@@ -249,14 +277,13 @@ void print_statement_unit_impl(StatementUnit *unit, int indent)
         printf("Goto name: %s\n", unit->goto_stmt.name);
         break;
 
-    // 简单语句：Decl, Expr, Break, Continue, Empty, Default
+    // === 简单语句已经在顶部打印 tokens，不需要额外递归 ===
     case SUT_DECL:
     case SUT_EXPR:
     case SUT_BREAK:
     case SUT_CONTINUE:
     case SUT_EMPTY:
     case SUT_DEFAULT:
-        // 已打印 token，结构无子节点
         break;
 
     default:
