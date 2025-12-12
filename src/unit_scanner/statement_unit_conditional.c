@@ -17,8 +17,8 @@ StatementUnit *make_if_statement_unit(
 
     unit->tokens = tokens;
     unit->if_stmt.cond = cond;
-    unit->if_stmt.cond = then_body;
-    unit->if_stmt.cond = else_body;
+    unit->if_stmt.then_body = then_body;
+    unit->if_stmt.else_body = else_body;
 
     return unit;
 }
