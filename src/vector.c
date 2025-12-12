@@ -44,7 +44,7 @@ Vector *vector_slice(Vector *vec, size_t begin, size_t end)
         return NULL;
 
     size_t count = end - begin;
-    if (vector_reserve(out, count))
+    if (!vector_reserve(out, count))
     {
         vector_free(out);
         return NULL;
