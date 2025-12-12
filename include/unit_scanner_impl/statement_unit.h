@@ -70,11 +70,21 @@ struct StatementUnit
             StatementUnit *body;
         } while_stmt;
 
+        // do body while (cond);
         struct
         {
             StatementUnit *body;
             StatementUnit *cond;
         } do_while_stmt;
+
+        // for(init; cond; step) body
+        struct
+        {
+            StatementUnit *init;
+            StatementUnit *cond;
+            StatementUnit *step;
+            StatementUnit *body;
+        } for_stmt;
 
         struct
         {
@@ -111,9 +121,20 @@ StatementUnit *make_switch_statement_unit(
 StatementUnit *make_case_statement_unit(Vector *tokens, StatementUnit *expr);
 StatementUnit *make_default_statement_unit(Vector *tokens, int dummy);
 
-StatementUnit *make_while_statement_unit();
-StatementUnit *make_do_while_statement_unit();
-StatementUnit *make_for_statement_unit();
+StatementUnit *make_while_statement_unit(
+    Vector *tokens,
+    StatementUnit *cond,
+    StatementUnit *body);
+StatementUnit *make_do_while_statement_unit(
+    Vector *tokens,
+    StatementUnit *body,
+    StatementUnit *cond);
+StatementUnit *make_for_statement_unit(
+    Vector *tokens,
+    StatementUnit *init,
+    StatementUnit *cond,
+    StatementUnit *step,
+    StatementUnit *body);
 
 StatementUnit *make_continue_statement_unit();
 StatementUnit *make_break_statement_unit();
