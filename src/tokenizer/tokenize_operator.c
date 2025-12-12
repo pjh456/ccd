@@ -1,5 +1,7 @@
 #include "tokenizer.h"
+#include "tokenizer_impl/token.h"
 #include "tokenizer_impl/tokenizer_impl.h"
+#include "utils.h"
 #include <string.h>
 
 // 运算符映射表
@@ -79,10 +81,10 @@ static const OpEntry op_table[] = {
     {NULL, T_UNKNOWN},
 };
 
-Token tokenize_operator(Tokenizer *tk)
+Token *tokenize_operator(Tokenizer *tk)
 {
-    Token t = make_token(tk, T_UNKNOWN, 1); // 预设一个未知 Token
-    const char *p = t.start;                // 获取源码当前位置指针
+    Token *t = make_token(tk, T_UNKNOWN, NULL, 1); // 预设一个未知 Token
+    const char *const p = tk->src + tk->pos;       // 获取源码当前位置指针
 
     const OpEntry *best = NULL;
     size_t best_len = 0;
@@ -111,8 +113,9 @@ Token tokenize_operator(Tokenizer *tk)
     if (best)
     {
         // 找到了最长匹配
-        t.type = best->type;
-        t.length = best_len;
+        t->type = best->type;
+        t->str = str_n_clone(p, best_len);
+        t->length = best_len;
 
         // 更新 Tokenizer 状态
         tk->pos += best_len;

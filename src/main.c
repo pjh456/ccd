@@ -47,15 +47,15 @@ int main(int argc, char **argv)
 
     for (;;)
     {
-        Token t = next(tk);
+        Token *t = next(tk);
 
-        printf("%4d:%-4d  %-12s  \"", t.line, t.col, token_name(t.type));
+        printf("%4d:%-4d  %-12s  \"", t->line, t->col, token_name(t->type));
 
         // 打印 token 原文
-        fwrite(t.start, 1, t.length, stdout);
+        fwrite(t->str, 1, t->length, stdout);
         printf("\"\n");
 
-        if (t.type == T_EOF)
+        if (t->type == T_EOF)
             break;
     }
 

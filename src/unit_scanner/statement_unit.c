@@ -150,7 +150,7 @@ void print_tokens(Vector *tokens)
 
         // 打印: TYPE(text)
         printf("%s(", token_name(t->type));
-        printf("%.*s", (int)t->length, t->start);
+        printf("%.*s", (int)t->length, t->str);
         printf(") ");
     }
 }

@@ -32,4 +32,4 @@ char advance(Tokenizer *tk);
 
 // === 核心调度逻辑 ===
 // 这是词法分析器的主循环入口
-Token next(Tokenizer *tk);
+Token *next(Tokenizer *tk);

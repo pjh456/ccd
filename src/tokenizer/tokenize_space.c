@@ -1,4 +1,5 @@
 #include "tokenizer.h"
+#include "tokenizer_impl/token.h"
 #include "tokenizer_impl/tokenizer_impl.h"
 #include "utils.h"
 #include <stdio.h>
@@ -52,9 +53,11 @@ void skip_comment(Tokenizer *tk)
     }
 }
 
-Token tokenize_preprocessor(Tokenizer *tk)
+Token *tokenize_preprocessor(Tokenizer *tk)
 {
-    Token t = make_token(tk, T_PREPROCESS, 0);
+    Token *t = make_token(tk, T_PREPROCESS, NULL, 0);
+    const char *const p = tk->src + tk->pos;
+
     advance(tk); // 跳过 '#'
 
     int connect_next_line = 0; // 是否有行连接符
@@ -80,23 +83,24 @@ Token tokenize_preprocessor(Tokenizer *tk)
         advance(tk);
     }
 
-    t.length = tk->src + tk->pos - t.start;
-    while (t.length > 0 && is_space(*(t.start + t.length - 1)))
-        t.length--;
+    t->length = tk->src + tk->pos - p;
+    t->str = str_n_clone(p, t->length);
+    while (t->length > 0 && is_space(*(t->str + t->length - 1)))
+        t->length--;
 
     return t;
 }
 
-Token tokenize_eof(Tokenizer *tk)
+Token *tokenize_eof(Tokenizer *tk)
 {
-    Token t = make_token(tk, T_EOF, 1);
+    Token *t = make_token(tk, T_EOF, NULL, 1);
     advance(tk);
     return t;
 }
 
-Token tokenize_unknown(Tokenizer *tk)
+Token *tokenize_unknown(Tokenizer *tk)
 {
-    Token t = make_token(tk, T_UNKNOWN, 1);
+    Token *t = make_token(tk, T_UNKNOWN, tk->src + tk->pos, 1);
     advance(tk); // 暂时这么写，之后会有贪婪匹配
     return t;
 }

@@ -54,7 +54,7 @@ char advance(Tokenizer *tk)
 
 // === 核心调度逻辑 ===
 // 这是词法分析器的主循环入口
-Token next(Tokenizer *tk)
+Token *next(Tokenizer *tk)
 {
     // 1. 跳过无意义的字符（空格、换行、制表符、注释等）
     skip_space(tk);

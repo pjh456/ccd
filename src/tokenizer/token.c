@@ -1,5 +1,7 @@
 #include "tokenizer_impl/token.h"
 #include "tokenizer.h"
+#include "utils.h"
+#include <stdlib.h>
 #include <stdio.h>
 
 const char *token_name(TokenType tt)
@@ -204,20 +206,30 @@ void print_token(const Token *t)
     printf(
         "%s (%.*s) at %d:%d\n",
         token_name(t->type),
-        (int)t->length, t->start,
+        (int)t->length, t->str,
         t->line, t->col);
 }
 
-Token make_token(Tokenizer *tk, TokenType tt, size_t len)
+Token *make_token(Tokenizer *tk, TokenType tt, const char *lit, size_t len)
 {
-    Token t;
-    t.type = tt;
+    Token *t = malloc(sizeof(*t));
+    t->type = tt;
+    t->str = str_n_clone(lit, len);
+    t->length = len;
     if (tk)
     {
-        t.start = tk->src + tk->pos; // 记录 Token 在源码中的绝对地址
-        t.line = tk->stus.line, t.col = tk->stus.col;
+        // 记录生成该 Token 时的行号和列号
+        t->line = tk->stus.line;
+        t->col = tk->stus.col;
     }
-    t.length = len;
-    // 记录生成该 Token 时的行号和列号
     return t;
+}
+
+void token_free(Token *t)
+{
+    if (!t)
+        return;
+    if (t->str)
+        free(t->str);
+    free(t);
 }

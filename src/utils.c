@@ -40,3 +40,13 @@ char *str_clone(const char *str)
     memcpy(p, str, len);
     return p;
 }
+
+char *str_n_clone(const char *str, size_t n)
+{
+    if (!str)
+        return NULL;
+    char *p = malloc(n + 1);
+    memcpy(p, str, n);
+    p[n] = '\0';
+    return p;
+}

@@ -1,5 +1,6 @@
 #include "tokenizer.h"
 #include "tokenizer_impl/tokenizer_impl.h"
+#include "tokenizer_impl/token.h"
 #include "utils.h"
 
 #include <string.h>
@@ -56,10 +57,10 @@ static const KwEntry kw_table[] = {
     {NULL, T_UNKNOWN},
 };
 
-Token tokenize_keyword(Tokenizer *tk)
+Token *tokenize_keyword(Tokenizer *tk)
 {
-    Token t = make_token(tk, T_UNKNOWN, 1);
-    const char *p = t.start;
+    Token *t = make_token(tk, T_UNKNOWN, 0, 1);
+    const char *const p = tk->src + tk->pos;
 
     // 尝试匹配关键字
     for (const KwEntry *e = kw_table; e->kw; e++)
@@ -76,8 +77,9 @@ Token tokenize_keyword(Tokenizer *tk)
             // 这说明它不是 "int" 关键字，而是标识符的一部分。
             if (!is_alnum(p[len]))
             {
-                t.type = e->type;
-                t.length = len;
+                t->type = e->type;
+                t->str = str_n_clone(p, len);
+                t->length = len;
 
                 // 更新位置
                 tk->pos += len;
@@ -92,14 +94,17 @@ Token tokenize_keyword(Tokenizer *tk)
     while (is_alnum(peek(tk)))
         advance(tk);
 
-    t.type = T_IDENTIFIER;
-    t.length = tk->src + tk->pos - t.start; // 计算长度
+    t->type = T_IDENTIFIER;
+    t->length = tk->src + tk->pos - p; // 计算长度
+    t->str = str_n_clone(p, t->length);
+
     return t;
 }
 
-Token tokenize_number(Tokenizer *tk)
+Token *tokenize_number(Tokenizer *tk)
 {
-    Token t = make_token(tk, T_NUMBER, 0);
+    Token *t = make_token(tk, T_NUMBER, NULL, 0);
+    const char *const p = tk->src + tk->pos;
     // 1. 消耗整数部分
     while (is_digit(peek(tk)))
         advance(tk);
@@ -112,13 +117,16 @@ Token tokenize_number(Tokenizer *tk)
             advance(tk);
     }
 
-    t.length = tk->src + tk->pos - t.start;
+    t->length = tk->src + tk->pos - p;
+    t->str = str_n_clone(p, t->length);
+
     return t;
 }
 
-Token tokenize_char(Tokenizer *tk)
+Token *tokenize_char(Tokenizer *tk)
 {
-    Token t = make_token(tk, T_CHARACTER, 0);
+    Token *t = make_token(tk, T_CHARACTER, NULL, 0);
+    const char *const p = tk->src + tk->pos;
     advance(tk); // 消耗开头的 '
 
     while (peek(tk) != '\'')
@@ -140,13 +148,18 @@ Token tokenize_char(Tokenizer *tk)
         advance(tk);
     }
     advance(tk); // 消耗闭合的 '
-    t.length = tk->src + tk->pos - t.start;
+
+    t->length = tk->src + tk->pos - p;
+    t->str = str_n_clone(p, t->length);
+
     return t;
 }
 
-Token tokenize_string(Tokenizer *tk)
+Token *tokenize_string(Tokenizer *tk)
 {
-    Token t = make_token(tk, T_STRING, 0);
+    Token *t = make_token(tk, T_STRING, NULL, 0);
+    const char *const p = tk->src + tk->pos;
+
     advance(tk); // 消耗开头的 "
 
     while (peek(tk) != '\"')
@@ -168,6 +181,9 @@ Token tokenize_string(Tokenizer *tk)
         advance(tk);
     }
     advance(tk); // 消耗闭合的 "
-    t.length = tk->src + tk->pos - t.start;
+
+    t->length = tk->src + tk->pos - p;
+    t->str = str_n_clone(p, t->length);
+
     return t;
 }

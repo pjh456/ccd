@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 // 前向声明，告诉编译器 Tokenizer 是个类型，具体细节在别处
+typedef struct Token Token;
 typedef struct Tokenizer Tokenizer;
 
 /**
@@ -130,14 +131,14 @@ typedef enum
  * 采用 String View (视图) 模式，不拷贝字符串，只记录指针和长度，
  * 极大提高了 Tokenizer 的性能。
  */
-typedef struct
+struct Token
 {
-    TokenType type;    // 类别
-    const char *start; // 指向源代码字符串中的起始位置
-    size_t length;     // Token 的长度
-    int line;          // 所在的行号
-    int col;           // 所在的列号
-} Token;
+    TokenType type; // 类别
+    char *str;
+    size_t length; // Token 的长度
+    int line;      // 所在的行号
+    int col;       // 所在的列号
+};
 
 // 获取 Token 类型的字符串名称 (用于调试打印)
 const char *token_name(TokenType tt);
@@ -146,4 +147,6 @@ const char *token_name(TokenType tt);
 void print_token(const Token *t);
 
 // 构造一个 Token 的辅助函数
-Token make_token(Tokenizer *tk, TokenType tt, size_t len);
+Token *make_token(Tokenizer *tk, TokenType tt, const char *lit, size_t len);
+
+void token_free(Token *t);

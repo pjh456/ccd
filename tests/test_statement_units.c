@@ -24,10 +24,11 @@ TokenStream init_stream(const char *src)
 
     while (1)
     {
-        Token t = next(tk);
+        Token *t = next(tk);
         vector_push_back(vec, &t);
-        if (t.type == T_EOF)
+        if (t->type == T_EOF)
             break;
+        token_free(t);
     }
     tokenizer_free(tk);
 
