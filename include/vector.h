@@ -27,6 +27,12 @@ Vector *vector_new(size_t ele_size);
 void vector_free(Vector *vec);
 
 /**
+ * @brief 返回一个新的 Vector
+ * @note 其中元素会进行浅拷贝
+ */
+Vector *vector_slice(Vector *vec, size_t begin, size_t end);
+
+/**
  * @brief 预留空间
  * 确保 vector 至少能容纳 new_cap 个元素，避免频繁 realloc。
  */
@@ -68,3 +74,16 @@ void *vector_front(Vector *vec);
  * @return void* 指向元素的指针，越界返回 NULL
  */
 void *vector_back(Vector *vec);
+
+/**
+ * @brief 向指定位置插入元素
+ * @param idx 要插入的数据下标
+ * @param elem 指向要复制的数据的指针
+ */
+int vector_insert(Vector *vec, size_t idx, void *elem);
+
+/**
+ * @brief 向指定位置删除元素
+ * @param idx 要移除的数据下标
+ */
+int vector_remove(Vector *vec, size_t idx);
