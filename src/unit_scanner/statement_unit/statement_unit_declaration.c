@@ -1,6 +1,6 @@
 #include "unit_scanner_impl/statement_unit.h"
-#include "unit_scanner_impl/statement_unit_impl.h"
-#include "unit_scanner_impl/statement_unit_declaration_impl.h"
+#include "unit_scanner_impl/statement_unit_impl/statement_unit_impl.h"
+#include "unit_scanner_impl/statement_unit_impl/statement_unit_declaration_impl.h"
 #include "vector.h"
 #include <stdlib.h>
 
