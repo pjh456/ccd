@@ -144,3 +144,7 @@ StatementUnit *make_label_statement_unit(Vector *tokens, char *name);
 StatementUnit *make_goto_statement_unit(Vector *tokens, char *name);
 
 void statement_unit_free(StatementUnit *unit);
+
+char *statement_unit_name(StatementUnitType sut);
+
+void print_statement_unit(StatementUnit *unit);
