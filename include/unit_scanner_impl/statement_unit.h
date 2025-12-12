@@ -140,7 +140,7 @@ StatementUnit *make_continue_statement_unit(Vector *tokens);
 StatementUnit *make_break_statement_unit(Vector *tokens);
 StatementUnit *make_return_statement_unit(Vector *tokens, StatementUnit *expr);
 
-StatementUnit *make_label_statement_unit();
-StatementUnit *make_goto_statement_unit();
+StatementUnit *make_label_statement_unit(Vector *tokens, char *name);
+StatementUnit *make_goto_statement_unit(Vector *tokens, char *name);
 
 void statement_unit_free(StatementUnit *unit);
