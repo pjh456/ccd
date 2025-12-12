@@ -18,16 +18,28 @@ Expression *make_expression_call(Expression *func, Vector *args)
     return call;
 }
 
-Expression *make_expression_sizeof(Expression *expr)
+Expression *make_expression_sizeof_expr(Expression *expr)
 {
     if (!expr)
         return NULL;
     Expression *call = calloc(1, sizeof(*call));
 
     call->type_info = make_int_type(CTS_NONE, CTQ_NONE, CTM_UNSIGNED);
-    call->type = EXPR_SIZEOF;
+    call->type = EXPR_SIZEOF_EXPR;
 
-    call->sizeof_call.expr = expr;
+    call->sizeof_expr.expr = expr;
+    return call;
+}
+Expression *make_expression_sizeof_type(CTypeInfo *cti)
+{
+    if (!cti)
+        return NULL;
+    Expression *call = calloc(1, sizeof(*call));
+
+    call->type_info = make_int_type(CTS_NONE, CTQ_NONE, CTM_UNSIGNED);
+    call->type = EXPR_SIZEOF_TYPE;
+
+    call->sizeof_type.type_info = cti;
     return call;
 }
 
@@ -46,11 +58,20 @@ void expression_call_free(Expression *expr)
     free(expr);
 }
 
-void expression_sizeof_free(Expression *expr)
+void expression_sizeof_expr_free(Expression *expr)
 {
-    if (!expr || expr->type != EXPR_CALL)
+    if (!expr || expr->type != EXPR_SIZEOF_EXPR)
         return;
     c_type_info_free(expr->type_info);
-    expression_free(expr->sizeof_call.expr);
+    expression_free(expr->sizeof_expr.expr);
+    free(expr);
+}
+
+void expression_sizeof_type_free(Expression *expr)
+{
+    if (!expr || expr->type != EXPR_SIZEOF_TYPE)
+        return;
+    c_type_info_free(expr->type_info);
+    c_type_info_free(expr->sizeof_type.type_info);
     free(expr);
 }

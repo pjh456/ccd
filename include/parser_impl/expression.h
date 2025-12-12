@@ -27,6 +27,10 @@ typedef enum
 
 typedef enum
 {
+    // === 取址运算符 ===
+    OP_ADDR,  // & (取地址)
+    OP_DEREF, // * (解引用)
+
     // === 位运算符 ===
     OP_NOT,   // ! (逻辑非)
     OP_TILDE, // ~ (按位取反)
@@ -77,8 +81,9 @@ typedef enum
     EXPR_UNARY,  // ++a, a--, -a, !a ...
     EXPR_BINARY, // a + b, a * b, ...
 
-    EXPR_CALL,   // f(a, b)
-    EXPR_SIZEOF, // sizeof(int)
+    EXPR_CALL,        // f(a, b)
+    EXPR_SIZEOF_EXPR, // sizeof(expr)
+    EXPR_SIZEOF_TYPE, // sizeof(int)
 
     EXPR_SUBSCRIPT,  // a[b]
     EXPR_MEMBER,     // a.b
@@ -164,7 +169,12 @@ struct Expression
         struct
         {
             Expression *expr;
-        } sizeof_call;
+        } sizeof_expr;
+
+        struct
+        {
+            CTypeInfo *type_info;
+        } sizeof_type;
 
         struct
         {
@@ -200,7 +210,8 @@ Expression *make_expression_assign(AssignOperator op, Expression *lhs, Expressio
 Expression *make_expression_unary(UnaryOperator op, Expression *expr, int is_prefix);
 Expression *make_expression_binary(BinaryOperator op, Expression *lhs, Expression *rhs);
 Expression *make_expression_call(Expression *func, Vector *args);
-Expression *make_expression_sizeof(Expression *expr);
+Expression *make_expression_sizeof_expr(Expression *expr);
+Expression *make_expression_sizeof_type(CTypeInfo *cti);
 Expression *make_expression_subscript(Expression *base, Expression *index);
 Expression *make_expression_member(Expression *base, Expression *mem);
 Expression *make_expression_ptr_member(Expression *base, Expression *mem);
