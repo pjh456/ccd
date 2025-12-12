@@ -1,5 +1,5 @@
 #include "parser_impl/c_type_info.h"
-#include "parser_impl/c_type_info_impl.h"
+#include "parser_impl/c_type_info_impl/c_type_info_impl.h"
 #include <stdlib.h>
 #include <string.h>
 

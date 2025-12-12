@@ -1,5 +1,8 @@
 #pragma once
 
+typedef struct Param Param;
+typedef struct Field Field;
+typedef struct EnumItem EnumItem;
 typedef struct CTypeInfo CTypeInfo;
 
 void c_void_type_info_free(CTypeInfo *cti);

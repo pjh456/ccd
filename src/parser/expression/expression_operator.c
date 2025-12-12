@@ -1,6 +1,6 @@
 #include "parser_impl/expression.h"
+#include "parser_impl/expression_impl/expression_operator_impl.h"
 #include "parser_impl/c_type_info.h"
-#include "parser_impl/expression_operator_impl.h"
 #include <stdlib.h>
 #include <string.h>
 
