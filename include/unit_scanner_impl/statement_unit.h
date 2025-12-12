@@ -93,16 +93,23 @@ struct StatementUnit
     };
 };
 
-StatementUnit *make_compound_statement_unit();
-StatementUnit *make_empty_statement_unit();
+StatementUnit *make_compound_statement_unit(Vector *tokens, Vector *units);
+StatementUnit *make_empty_statement_unit(Vector *tokens);
 
-StatementUnit *make_declaration_statement_unit();
-StatementUnit *make_expression_statement_unit();
+StatementUnit *make_declaration_statement_unit(Vector *tokens);
+StatementUnit *make_expression_statement_unit(Vector *tokens);
 
-StatementUnit *make_if_statement_unit();
-StatementUnit *make_switch_statement_unit();
-StatementUnit *make_case_statement_unit();
-StatementUnit *make_default_statement_unit();
+StatementUnit *make_if_statement_unit(
+    Vector *tokens,
+    StatementUnit *cond,
+    StatementUnit *then_body,
+    StatementUnit *else_body);
+StatementUnit *make_switch_statement_unit(
+    Vector *tokens,
+    StatementUnit *expr,
+    StatementUnit *body);
+StatementUnit *make_case_statement_unit(Vector *tokens, StatementUnit *expr);
+StatementUnit *make_default_statement_unit(Vector *tokens, int dummy);
 
 StatementUnit *make_while_statement_unit();
 StatementUnit *make_do_while_statement_unit();
