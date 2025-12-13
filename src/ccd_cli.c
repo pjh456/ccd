@@ -105,7 +105,7 @@ void dump_units(Vector *tokens)
     StatementUnit *root = scan_file(us);
     if (root)
     {
-        print_statement_unit(root);
+        print_statement_unit(root, 0);
         statement_unit_free(root);
     }
 

@@ -149,4 +149,4 @@ void statement_unit_free(StatementUnit *unit);
 
 char *statement_unit_name(StatementUnitType sut);
 
-void print_statement_unit(StatementUnit *unit);
+void print_statement_unit(StatementUnit *unit, int token_printed);

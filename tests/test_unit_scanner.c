@@ -44,7 +44,7 @@ void test_auto_scan()
     assert(root->type == SUT_COMPOUND);
 
     // 你可以只打印 root（最理想）
-    print_statement_unit(root);
+    print_statement_unit(root, 1);
 
     statement_unit_free(root);
     unit_scanner_free(us);

@@ -296,7 +296,7 @@ void test_full()
     // 构建根节点
     StatementUnit *root = make_compound_statement_unit(root_tok, root_children);
 
-    print_statement_unit(root);
+    print_statement_unit(root, 1);
     statement_unit_free(root);
 
     vector_free(ts.all_tokens);

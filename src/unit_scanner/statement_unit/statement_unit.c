@@ -129,9 +129,9 @@ char *statement_unit_name(StatementUnitType sut)
     }
 }
 
-void print_statement_unit(StatementUnit *unit)
+void print_statement_unit(StatementUnit *unit, int token_printed)
 {
-    print_statement_unit_impl(unit, 0);
+    print_statement_unit_impl(unit, 0, token_printed);
 }
 
 void print_tokens(Vector *tokens)
@@ -153,7 +153,7 @@ void print_tokens(Vector *tokens)
     }
 }
 
-void print_statement_unit_impl(StatementUnit *unit, int indent)
+void print_statement_unit_impl(StatementUnit *unit, int indent, int token_printed)
 {
     if (!unit)
         return;
@@ -162,10 +162,13 @@ void print_statement_unit_impl(StatementUnit *unit, int indent)
     print_indent(indent);
     printf("[%s]", statement_unit_name(unit->type));
 
-    if (unit->tokens && unit->tokens->size > 0)
+    if (token_printed)
     {
-        printf("  ");
-        print_tokens(unit->tokens);
+        if (unit->tokens && unit->tokens->size > 0)
+        {
+            printf("  ");
+            print_tokens(unit->tokens);
+        }
     }
     printf("\n");
 
@@ -179,7 +182,7 @@ void print_statement_unit_impl(StatementUnit *unit, int indent)
             for (size_t i = 0; i < items->size; ++i)
             {
                 StatementUnit *child = *((StatementUnit **)vector_get(items, i));
-                print_statement_unit_impl(child, indent + 4);
+                print_statement_unit_impl(child, indent + 4, token_printed);
             }
         }
         break;
@@ -188,72 +191,72 @@ void print_statement_unit_impl(StatementUnit *unit, int indent)
     case SUT_IF:
         print_indent(indent + 2);
         printf("Condition:\n");
-        print_statement_unit_impl(unit->if_stmt.cond, indent + 4);
+        print_statement_unit_impl(unit->if_stmt.cond, indent + 4, token_printed);
 
         print_indent(indent + 2);
         printf("Then:\n");
-        print_statement_unit_impl(unit->if_stmt.then_body, indent + 4);
+        print_statement_unit_impl(unit->if_stmt.then_body, indent + 4, token_printed);
 
         if (unit->if_stmt.else_body)
         {
             print_indent(indent + 2);
             printf("Else:\n");
-            print_statement_unit_impl(unit->if_stmt.else_body, indent + 4);
+            print_statement_unit_impl(unit->if_stmt.else_body, indent + 4, token_printed);
         }
         break;
 
     case SUT_SWITCH:
         print_indent(indent + 2);
         printf("Switch expr:\n");
-        print_statement_unit_impl(unit->switch_stmt.expr, indent + 4);
+        print_statement_unit_impl(unit->switch_stmt.expr, indent + 4, token_printed);
 
         print_indent(indent + 2);
         printf("Body:\n");
-        print_statement_unit_impl(unit->switch_stmt.body, indent + 4);
+        print_statement_unit_impl(unit->switch_stmt.body, indent + 4, token_printed);
         break;
 
     case SUT_CASE:
         print_indent(indent + 2);
         printf("Case expr:\n");
-        print_statement_unit_impl(unit->case_stmt.expr, indent + 4);
+        print_statement_unit_impl(unit->case_stmt.expr, indent + 4, token_printed);
         break;
 
     case SUT_WHILE:
         print_indent(indent + 2);
         printf("Condition:\n");
-        print_statement_unit_impl(unit->while_stmt.cond, indent + 4);
+        print_statement_unit_impl(unit->while_stmt.cond, indent + 4, token_printed);
 
         print_indent(indent + 2);
         printf("Body:\n");
-        print_statement_unit_impl(unit->while_stmt.body, indent + 4);
+        print_statement_unit_impl(unit->while_stmt.body, indent + 4, token_printed);
         break;
 
     case SUT_DO_WHILE:
         print_indent(indent + 2);
         printf("Body:\n");
-        print_statement_unit_impl(unit->do_while_stmt.body, indent + 4);
+        print_statement_unit_impl(unit->do_while_stmt.body, indent + 4, token_printed);
 
         print_indent(indent + 2);
         printf("Condition:\n");
-        print_statement_unit_impl(unit->do_while_stmt.cond, indent + 4);
+        print_statement_unit_impl(unit->do_while_stmt.cond, indent + 4, token_printed);
         break;
 
     case SUT_FOR:
         print_indent(indent + 2);
         printf("Init:\n");
-        print_statement_unit_impl(unit->for_stmt.init, indent + 4);
+        print_statement_unit_impl(unit->for_stmt.init, indent + 4, token_printed);
 
         print_indent(indent + 2);
         printf("Cond:\n");
-        print_statement_unit_impl(unit->for_stmt.cond, indent + 4);
+        print_statement_unit_impl(unit->for_stmt.cond, indent + 4, token_printed);
 
         print_indent(indent + 2);
         printf("Step:\n");
-        print_statement_unit_impl(unit->for_stmt.step, indent + 4);
+        print_statement_unit_impl(unit->for_stmt.step, indent + 4, token_printed);
 
         print_indent(indent + 2);
         printf("Body:\n");
-        print_statement_unit_impl(unit->for_stmt.body, indent + 4);
+        print_statement_unit_impl(unit->for_stmt.body, indent + 4, token_printed);
         break;
 
     case SUT_RETURN:
@@ -261,7 +264,7 @@ void print_statement_unit_impl(StatementUnit *unit, int indent)
         {
             print_indent(indent + 2);
             printf("Expr:\n");
-            print_statement_unit_impl(unit->return_stmt.expr, indent + 4);
+            print_statement_unit_impl(unit->return_stmt.expr, indent + 4, token_printed);
         }
         break;
 
