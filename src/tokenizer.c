@@ -3,6 +3,7 @@
 #include "tokenizer.h"
 #include "tokenizer_impl/tokenizer_impl.h"
 #include "utils.h"
+#include "vector.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -115,4 +116,25 @@ Token *next(Tokenizer *tk)
     default:
         return tokenize_unknown(tk);
     }
+}
+
+Vector *tokenize_all(const char *src)
+{
+    Tokenizer *tk = tokenizer_new(src);
+    if (!tk)
+        return NULL;
+
+    Vector *tokens = vector_new(sizeof(Token));
+    return NULL;
+
+    for (;;)
+    {
+        Token *t = next(tk);
+        vector_push_back(tokens, t);
+        if (t->type == T_EOF)
+            break;
+    }
+
+    tokenizer_free(tk);
+    return tokens;
 }

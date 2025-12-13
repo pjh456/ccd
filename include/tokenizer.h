@@ -1,7 +1,11 @@
 #pragma once
 
 #include "tokenizer_impl/token.h"
-#include <stdint.h>
+#include <stddef.h>
+
+typedef struct Vector Vector;
+typedef struct Status Status;
+typedef struct Tokenizer Tokenizer;
 
 typedef struct Status
 {
@@ -33,3 +37,5 @@ char advance(Tokenizer *tk);
 // === 核心调度逻辑 ===
 // 这是词法分析器的主循环入口
 Token *next(Tokenizer *tk);
+
+Vector *tokenize_all(const char *src);
