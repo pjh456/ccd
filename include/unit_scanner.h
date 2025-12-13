@@ -20,5 +20,4 @@ void unit_scanner_free(UnitScanner *us);
 Token *peek_token(UnitScanner *us);
 Token *next_token(UnitScanner *us);
 
-StatementUnit *scan_unit(UnitScanner *us);
-StatementUnit *scan_identifier(UnitScanner *us);
+StatementUnit *scan_file(UnitScanner *us);

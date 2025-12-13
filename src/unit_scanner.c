@@ -25,6 +25,25 @@ void unit_scanner_free(UnitScanner *us)
 Token *peek_token(UnitScanner *us) { return (Token *)vector_get(us->tokens, us->pos); }
 Token *next_token(UnitScanner *us) { return (Token *)vector_get(us->tokens, us->pos++); }
 
+StatementUnit *scan_file(UnitScanner *us)
+{
+    if (!us)
+        return NULL;
+
+    Vector *units = vector_new(sizeof(StatementUnit *));
+    while (peek_token(us)->type != T_EOF)
+    {
+        StatementUnit *ptr = scan_unit(us);
+        vector_push_back(units, &ptr);
+    }
+
+    StatementUnit *unit = make_compound_statement_unit(
+        vector_slice(us->tokens, 0, us->tokens->size),
+        units);
+
+    return unit;
+}
+
 StatementUnit *scan_unit(UnitScanner *us)
 {
     if (!us)
@@ -61,6 +80,8 @@ StatementUnit *scan_unit(UnitScanner *us)
         return scan_return(us);
     case T_GOTO:
         return scan_goto(us);
+    case T_PREPROCESS:
+        return scan_preprocessor(us);
     default:
         return scan_decl_or_expression(us, 0);
     }

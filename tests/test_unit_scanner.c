@@ -39,7 +39,7 @@ void test_auto_scan()
     assert(children);
 
     // 跳过 '{'
-    StatementUnit *root = scan_unit(us);
+    StatementUnit *root = scan_file(us);
     assert(root);
     assert(root->type == SUT_COMPOUND);
 
