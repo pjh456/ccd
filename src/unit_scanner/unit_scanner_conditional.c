@@ -14,12 +14,23 @@ StatementUnit *scan_if(UnitScanner *us)
     size_t pos = us->pos;
     next_token(us); // if
 
-    StatementUnit *cond = scan_decl_or_expression(us);
+    if (peek_token(us)->type != T_LEFT_PAREN)
+        return NULL;
+    next_token(us); // (
+
+    StatementUnit *cond = scan_decl_or_expression(us, 1);
+    if (peek_token(us)->type != T_RIGHT_PAREN)
+    {
+        statement_unit_free(cond);
+        return NULL;
+    }
+    next_token(us); // )
+
     StatementUnit *then_body = scan_unit(us);
     StatementUnit *else_body = NULL;
     if (peek_token(us)->type == T_ELSE)
     {
-        next_token(us);
+        next_token(us); // else
         else_body = scan_unit(us);
     }
 
@@ -40,7 +51,19 @@ StatementUnit *scan_switch(UnitScanner *us)
     size_t pos = us->pos;
     next_token(us); // switch
 
-    StatementUnit *expr = scan_decl_or_expression(us);
+    if (peek_token(us)->type != T_LEFT_PAREN)
+        return NULL;
+    next_token(us); // (
+
+    StatementUnit *expr = scan_decl_or_expression(us, 1);
+
+    if (peek_token(us)->type != T_RIGHT_PAREN)
+    {
+        statement_unit_free(expr);
+        return NULL;
+    }
+    next_token(us); // )
+
     StatementUnit *body = scan_compound(us);
 
     StatementUnit *unit = make_switch_statement_unit(
@@ -60,7 +83,7 @@ StatementUnit *scan_case(UnitScanner *us)
     size_t pos = us->pos;
     next_token(us); // case
 
-    StatementUnit *expr = scan_decl_or_expression(us);
+    StatementUnit *expr = scan_decl_or_expression(us, 1);
 
     if (peek_token(us)->type != T_COLON)
     {

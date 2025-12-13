@@ -4,7 +4,7 @@
 #include "tokenizer.h"
 #include "tokenizer_impl/token.h"
 #include "vector.h"
-#include <malloc.h>
+#include <stdlib.h>
 
 UnitScanner *unit_scanner_new(Vector *tokens)
 {
@@ -62,7 +62,7 @@ StatementUnit *scan_unit(UnitScanner *us)
     case T_GOTO:
         return scan_goto(us);
     default:
-        return scan_decl_or_expression(us);
+        return scan_decl_or_expression(us, 0);
     }
 }
 
@@ -73,9 +73,9 @@ StatementUnit *scan_identifier(UnitScanner *us)
     if (peek_token(us)->type != T_IDENTIFIER)
         return NULL;
 
-    Token *t = (Token *)vector_get(us->tokens, us->pos);
+    Token *t = (Token *)vector_get(us->tokens, us->pos + 1);
     if (!t)
-        return NULL;
+        return scan_decl_or_expression(us, 0);
 
     switch (t->type)
     {
@@ -120,7 +120,7 @@ StatementUnit *scan_identifier(UnitScanner *us)
 
     case T_INC: // ++
     case T_DEC: // --
-        return scan_decl_or_expression(us);
+        return scan_decl_or_expression(us, 0);
     default:
         return NULL;
     }

@@ -3,6 +3,7 @@
 #include "unit_scanner_impl/statement_unit.h"
 #include "tokenizer_impl/token.h"
 #include "vector.h"
+#include <stdlib.h>
 
 StatementUnit *scan_empty(UnitScanner *us)
 {
@@ -11,10 +12,12 @@ StatementUnit *scan_empty(UnitScanner *us)
     if (peek_token(us)->type != T_SEMICOLON)
         return NULL;
 
-    StatementUnit *unit = make_empty_statement_unit(
-        vector_slice(us->tokens, us->pos, us->pos + 1));
-
+    size_t pos = us->pos;
     next_token(us); // ;
+
+    StatementUnit *unit = make_empty_statement_unit(
+        vector_slice(us->tokens, pos, us->pos));
+
     return unit;
 }
 
@@ -31,11 +34,8 @@ StatementUnit *scan_compound(UnitScanner *us)
     Vector *units = vector_new(sizeof(StatementUnit *));
     while (peek_token(us)->type != T_EOF)
     {
-        vector_push_back(units, scan_unit(us));
-
-        if (peek_token(us)->type != T_SEMICOLON) // error
-            break;
-        next_token(us); // ;
+        StatementUnit *ptr = scan_unit(us);
+        vector_push_back(units, &ptr);
 
         if (peek_token(us)->type == T_RIGHT_BRACE)
         {
