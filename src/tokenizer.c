@@ -125,7 +125,8 @@ Vector *tokenize_all(const char *src)
         return NULL;
 
     Vector *tokens = vector_new(sizeof(Token));
-    return NULL;
+    if (!tokens)
+        return NULL;
 
     for (;;)
     {
