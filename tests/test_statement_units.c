@@ -25,10 +25,9 @@ TokenStream init_stream(const char *src)
     while (1)
     {
         Token *t = next(tk);
-        vector_push_back(vec, &t);
+        vector_push_back(vec, t);
         if (t->type == T_EOF)
             break;
-        token_free(t);
     }
     tokenizer_free(tk);
 
@@ -106,7 +105,7 @@ void test_full()
     // -------------------------
     {
         Vector *toks = slice_until(&ts, T_SEMICOLON);
-        StatementUnit *u = make_declaration_statement_unit(toks);
+        StatementUnit *u = make_decl_or_expr_statement_unit(toks);
         vector_push_back(root_children, &u);
     }
 
@@ -115,7 +114,7 @@ void test_full()
     // -------------------------
     {
         Vector *toks = slice_until(&ts, T_SEMICOLON);
-        StatementUnit *u = make_expression_statement_unit(toks);
+        StatementUnit *u = make_decl_or_expr_statement_unit(toks);
         vector_push_back(root_children, &u);
     }
 
@@ -126,7 +125,7 @@ void test_full()
         Vector *if_kw = slice_exact(&ts, 1); // if
 
         Vector *cond = slice_until(&ts, T_RIGHT_PAREN); // (a)
-        StatementUnit *cond_u = make_expression_statement_unit(cond);
+        StatementUnit *cond_u = make_decl_or_expr_statement_unit(cond);
 
         // then { return a; }
         Vector *then_l = slice_exact(&ts, 1); // {
@@ -134,8 +133,9 @@ void test_full()
         {
             Vector *ret_kw = slice_exact(&ts, 1);             // return
             Vector *ret_expr = slice_until(&ts, T_SEMICOLON); // a;
-            StatementUnit *ret_u = make_return_statement_unit(ret_kw,
-                                                              make_expression_statement_unit(ret_expr));
+            StatementUnit *ret_u = make_return_statement_unit(
+                ret_kw,
+                make_decl_or_expr_statement_unit(ret_expr));
             vector_push_back(then_children, &ret_u);
         }
         Vector *then_r = slice_exact(&ts, 1); // }
@@ -172,7 +172,7 @@ void test_full()
     // -------------------------
     {
         Vector *w_kw = slice_exact(&ts, 1); // while
-        StatementUnit *cond = make_expression_statement_unit(slice_until(&ts, T_RIGHT_PAREN));
+        StatementUnit *cond = make_decl_or_expr_statement_unit(slice_until(&ts, T_RIGHT_PAREN));
         StatementUnit *body = make_continue_statement_unit(slice_until(&ts, T_SEMICOLON));
         StatementUnit *u = make_while_statement_unit(w_kw, cond, body);
         vector_push_back(root_children, &u);
@@ -200,7 +200,7 @@ void test_full()
 
         Vector *while_kw = slice_exact(&ts, 1);
         (void)while_kw; // while
-        StatementUnit *cond = make_expression_statement_unit(slice_until(&ts, T_RIGHT_PAREN));
+        StatementUnit *cond = make_decl_or_expr_statement_unit(slice_until(&ts, T_RIGHT_PAREN));
         Vector *semi = slice_exact(&ts, 1);
         (void)semi;
 
@@ -234,21 +234,21 @@ void test_full()
     // -------------------------
     {
         Vector *sw_kw = slice_exact(&ts, 1); // switch
-        StatementUnit *expr = make_expression_statement_unit(slice_until(&ts, T_RIGHT_PAREN));
+        StatementUnit *expr = make_decl_or_expr_statement_unit(slice_until(&ts, T_RIGHT_PAREN));
 
         Vector *body_l = slice_exact(&ts, 1);
         Vector *children = vector_new(sizeof(StatementUnit *));
 
         // case 1:
         Vector *case_kw = slice_exact(&ts, 1);
-        StatementUnit *cv = make_expression_statement_unit(slice_until(&ts, T_COLON));
+        StatementUnit *cv = make_decl_or_expr_statement_unit(slice_until(&ts, T_COLON));
         StatementUnit *cu = make_case_statement_unit(case_kw, cv);
         vector_push_back(children, &cu);
 
         // a=2;
         {
             Vector *toks = slice_until(&ts, T_SEMICOLON);
-            StatementUnit *e = make_expression_statement_unit(toks);
+            StatementUnit *e = make_decl_or_expr_statement_unit(toks);
             vector_push_back(children, &e);
         }
 
