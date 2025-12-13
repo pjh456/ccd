@@ -3,8 +3,12 @@
 typedef struct StatementUnit StatementUnit;
 typedef struct UnitScanner UnitScanner;
 
+StatementUnit *scan_unit(UnitScanner *us);
+StatementUnit *scan_identifier(UnitScanner *us);
+
 StatementUnit *scan_empty(UnitScanner *us);
 StatementUnit *scan_compound(UnitScanner *us);
+StatementUnit *scan_preprocessor(UnitScanner *us);
 
 StatementUnit *scan_decl_or_expression(UnitScanner *us, int no_semicolon);
 

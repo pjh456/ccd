@@ -29,6 +29,18 @@ StatementUnit *make_empty_statement_unit(Vector *tokens)
     return unit;
 }
 
+StatementUnit *make_preprocessor_statement_unit(Vector *tokens)
+{
+    if (!tokens)
+        return NULL;
+    StatementUnit *unit = calloc(1, sizeof(*unit));
+    unit->type = SUT_PREPROCESSOR;
+
+    unit->tokens = tokens;
+
+    return unit;
+}
+
 void statement_unit_compound_free(StatementUnit *unit)
 {
     if (!unit || unit->type != SUT_COMPOUND)
@@ -46,6 +58,14 @@ void statement_unit_compound_free(StatementUnit *unit)
 void statement_unit_empty_free(StatementUnit *unit)
 {
     if (!unit || unit->type != SUT_EMPTY)
+        return;
+    statement_unit_free_tokens(unit->tokens);
+    free(unit);
+}
+
+void statement_unit_preprocessor_free(StatementUnit *unit)
+{
+    if (!unit || unit->type != SUT_PREPROCESSOR)
         return;
     statement_unit_free_tokens(unit->tokens);
     free(unit);

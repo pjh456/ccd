@@ -50,3 +50,19 @@ StatementUnit *scan_compound(UnitScanner *us)
 
     return unit;
 }
+
+StatementUnit *scan_preprocessor(UnitScanner *us)
+{
+    if (!us)
+        return NULL;
+    if (peek_token(us)->type != T_PREPROCESS)
+        return NULL;
+
+    size_t pos = us->pos;
+    next_token(us); // #...
+
+    StatementUnit *unit = make_preprocessor_statement_unit(
+        vector_slice(us->tokens, pos, us->pos));
+
+    return unit;
+}

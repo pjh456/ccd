@@ -5,8 +5,9 @@ typedef struct StatementUnit StatementUnit;
 
 typedef enum
 {
-    SUT_COMPOUND, // { ... }
-    SUT_EMPTY,    // ;
+    SUT_COMPOUND,     // { ... }
+    SUT_EMPTY,        // ;
+    SUT_PREPROCESSOR, // # include
 
     SUT_DECL_OR_EXPR, // int a = 1; 1 + 2;
 
@@ -104,6 +105,7 @@ struct StatementUnit
 
 StatementUnit *make_compound_statement_unit(Vector *tokens, Vector *units);
 StatementUnit *make_empty_statement_unit(Vector *tokens);
+StatementUnit *make_preprocessor_statement_unit(Vector *tokens);
 
 StatementUnit *make_decl_or_expr_statement_unit(Vector *tokens);
 

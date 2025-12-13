@@ -96,6 +96,8 @@ char *statement_unit_name(StatementUnitType sut)
         return "COMPOUND";
     case SUT_EMPTY:
         return "EMPTY";
+    case SUT_PREPROCESSOR:
+        return "PREPROCESSOR";
     case SUT_DECL_OR_EXPR:
         return "DECL_OR_EXPR";
     case SUT_IF:
@@ -274,6 +276,7 @@ void print_statement_unit_impl(StatementUnit *unit, int indent)
         break;
 
     // === 简单语句已经在顶部打印 tokens，不需要额外递归 ===
+    case SUT_PREPROCESSOR:
     case SUT_DECL_OR_EXPR:
     case SUT_BREAK:
     case SUT_CONTINUE:
