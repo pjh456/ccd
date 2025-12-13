@@ -39,26 +39,6 @@ StatementUnit *scan_unit(UnitScanner *us)
         return scan_empty(us);
     case T_LEFT_BRACE:
         return scan_compound(us);
-    case T_EXTERN:
-    case T_STATIC:
-    case T_INLINE:
-    case T_REGISTER:
-    case T_RESTRICT:
-    case T_VOLATILE:
-    case T_CONST:
-    case T_AUTO:
-    case T_VOID:
-    case T_SIGNED:
-    case T_UNSIGNED:
-    case T_CHAR:
-    case T_SHORT:
-    case T_INT:
-    case T_LONG:
-    case T_FLOAT:
-    case T_DOUBLE:
-        return scan_declaration(us);
-    case T_LEFT_PAREN:
-        return scan_expression(us);
     case T_IF:
         return scan_if(us);
     case T_SWITCH:
@@ -82,7 +62,7 @@ StatementUnit *scan_unit(UnitScanner *us)
     case T_GOTO:
         return scan_goto(us);
     default:
-        return NULL;
+        return scan_decl_or_expression(us);
     }
 }
 
@@ -103,7 +83,7 @@ StatementUnit *scan_identifier(UnitScanner *us)
         return scan_label(us);
     case T_LEFT_PAREN:
     case T_COMMA:
-        return scan_expression(us);
+
     case T_AND:         // &
     case T_OR:          // |
     case T_XOR:         // ^
@@ -140,7 +120,7 @@ StatementUnit *scan_identifier(UnitScanner *us)
 
     case T_INC: // ++
     case T_DEC: // --
-        return scan_expression(us);
+        return scan_decl_or_expression(us);
     default:
         return NULL;
     }

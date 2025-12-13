@@ -8,8 +8,7 @@ typedef enum
     SUT_COMPOUND, // { ... }
     SUT_EMPTY,    // ;
 
-    SUT_DECL, // int a = 1;
-    SUT_EXPR, // 1 + 2
+    SUT_DECL_OR_EXPR, // int a = 1; 1 + 2;
 
     SUT_IF,      // if
     SUT_SWITCH,  // switch
@@ -106,8 +105,7 @@ struct StatementUnit
 StatementUnit *make_compound_statement_unit(Vector *tokens, Vector *units);
 StatementUnit *make_empty_statement_unit(Vector *tokens);
 
-StatementUnit *make_declaration_statement_unit(Vector *tokens);
-StatementUnit *make_expression_statement_unit(Vector *tokens);
+StatementUnit *make_decl_or_expr_statement_unit(Vector *tokens);
 
 StatementUnit *make_if_statement_unit(
     Vector *tokens,

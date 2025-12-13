@@ -1,7 +1,7 @@
 #include "unit_scanner_impl/statement_unit.h"
 #include "unit_scanner_impl/statement_unit_impl/statement_unit_impl.h"
 #include "unit_scanner_impl/statement_unit_impl/statement_unit_compound_impl.h"
-#include "unit_scanner_impl/statement_unit_impl/statement_unit_declaration_impl.h"
+#include "unit_scanner_impl/statement_unit_impl/statement_unit_decl_or_expr_impl.h"
 #include "unit_scanner_impl/statement_unit_impl/statement_unit_conditional_impl.h"
 #include "unit_scanner_impl/statement_unit_impl/statement_unit_loop_impl.h"
 #include "unit_scanner_impl/statement_unit_impl/statement_unit_break_impl.h"
@@ -36,11 +36,9 @@ void statement_unit_free(StatementUnit *unit)
     case SUT_EMPTY:
         statement_unit_empty_free(unit);
         break;
-    case SUT_DECL:
-        statement_unit_declaration_free(unit);
+    case SUT_DECL_OR_EXPR:
+        statement_unit_decl_or_expr_free(unit);
         break;
-    case SUT_EXPR:
-        statement_unit_expression_free(unit);
         break;
     case SUT_IF:
         statement_unit_if_free(unit);
@@ -98,10 +96,8 @@ char *statement_unit_name(StatementUnitType sut)
         return "COMPOUND";
     case SUT_EMPTY:
         return "EMPTY";
-    case SUT_DECL:
-        return "DECLARATION";
-    case SUT_EXPR:
-        return "EXPRESSION";
+    case SUT_DECL_OR_EXPR:
+        return "DECL_OR_EXPR";
     case SUT_IF:
         return "IF";
     case SUT_SWITCH:
@@ -278,8 +274,7 @@ void print_statement_unit_impl(StatementUnit *unit, int indent)
         break;
 
     // === 简单语句已经在顶部打印 tokens，不需要额外递归 ===
-    case SUT_DECL:
-    case SUT_EXPR:
+    case SUT_DECL_OR_EXPR:
     case SUT_BREAK:
     case SUT_CONTINUE:
     case SUT_EMPTY:

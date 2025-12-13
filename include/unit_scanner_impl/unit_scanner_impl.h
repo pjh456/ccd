@@ -6,8 +6,7 @@ typedef struct UnitScanner UnitScanner;
 StatementUnit *scan_empty(UnitScanner *us);
 StatementUnit *scan_compound(UnitScanner *us);
 
-StatementUnit *scan_declaration(UnitScanner *us);
-StatementUnit *scan_expression(UnitScanner *us);
+StatementUnit *scan_decl_or_expression(UnitScanner *us);
 
 StatementUnit *scan_if(UnitScanner *us);
 StatementUnit *scan_switch(UnitScanner *us);
