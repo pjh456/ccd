@@ -10,7 +10,7 @@ StatementUnit *scan_empty(UnitScanner *us);
 StatementUnit *scan_compound(UnitScanner *us);
 StatementUnit *scan_preprocessor(UnitScanner *us);
 
-StatementUnit *scan_decl_or_expression(UnitScanner *us, int no_semicolon);
+StatementUnit *scan_decl_or_expression(UnitScanner *us);
 
 StatementUnit *scan_if(UnitScanner *us);
 StatementUnit *scan_switch(UnitScanner *us);

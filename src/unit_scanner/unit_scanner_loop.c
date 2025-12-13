@@ -18,7 +18,8 @@ StatementUnit *scan_while(UnitScanner *us)
         return NULL;
     next_token(us); // (
 
-    StatementUnit *cond = scan_decl_or_expression(us, 1);
+    StatementUnit *cond = scan_decl_or_expression(us);
+
     if (peek_token(us)->type != T_RIGHT_PAREN)
     {
         statement_unit_free(cond);
@@ -57,7 +58,8 @@ StatementUnit *scan_do_while(UnitScanner *us)
         return NULL;
     next_token(us); // (
 
-    StatementUnit *cond = scan_decl_or_expression(us, 1);
+    StatementUnit *cond = scan_decl_or_expression(us);
+
     if (peek_token(us)->type != T_RIGHT_PAREN)
     {
         statement_unit_free(cond);
@@ -94,9 +96,26 @@ StatementUnit *scan_for(UnitScanner *us)
         return NULL;
     next_token(us); // (
 
-    StatementUnit *init = scan_decl_or_expression(us, 0);
-    StatementUnit *cond = scan_decl_or_expression(us, 0);
-    StatementUnit *step = scan_decl_or_expression(us, 1);
+    StatementUnit *init = scan_decl_or_expression(us);
+
+    if (peek_token(us)->type != T_SEMICOLON)
+    {
+        statement_unit_free(init);
+        return NULL;
+    }
+    next_token(us); // ;
+
+    StatementUnit *cond = scan_decl_or_expression(us);
+
+    if (peek_token(us)->type != T_SEMICOLON)
+    {
+        statement_unit_free(init);
+        statement_unit_free(cond);
+        return NULL;
+    }
+    next_token(us); // ;
+
+    StatementUnit *step = scan_decl_or_expression(us);
 
     if (peek_token(us)->type != T_RIGHT_PAREN)
     {

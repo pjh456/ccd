@@ -54,7 +54,7 @@ StatementUnit *scan_return(UnitScanner *us)
     size_t pos = us->pos;
     next_token(us); // return
 
-    StatementUnit *expr = scan_decl_or_expression(us, 1);
+    StatementUnit *expr = scan_decl_or_expression(us);
 
     if (peek_token(us)->type != T_SEMICOLON)
     {

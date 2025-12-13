@@ -18,7 +18,8 @@ StatementUnit *scan_if(UnitScanner *us)
         return NULL;
     next_token(us); // (
 
-    StatementUnit *cond = scan_decl_or_expression(us, 1);
+    StatementUnit *cond = scan_decl_or_expression(us);
+
     if (peek_token(us)->type != T_RIGHT_PAREN)
     {
         statement_unit_free(cond);
@@ -55,7 +56,7 @@ StatementUnit *scan_switch(UnitScanner *us)
         return NULL;
     next_token(us); // (
 
-    StatementUnit *expr = scan_decl_or_expression(us, 1);
+    StatementUnit *expr = scan_decl_or_expression(us);
 
     if (peek_token(us)->type != T_RIGHT_PAREN)
     {
@@ -83,7 +84,7 @@ StatementUnit *scan_case(UnitScanner *us)
     size_t pos = us->pos;
     next_token(us); // case
 
-    StatementUnit *expr = scan_decl_or_expression(us, 1);
+    StatementUnit *expr = scan_decl_or_expression(us);
 
     if (peek_token(us)->type != T_COLON)
     {

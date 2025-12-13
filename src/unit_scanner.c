@@ -83,7 +83,12 @@ StatementUnit *scan_unit(UnitScanner *us)
     case T_PREPROCESS:
         return scan_preprocessor(us);
     default:
-        return scan_decl_or_expression(us, 0);
+    {
+        StatementUnit *unit = scan_decl_or_expression(us);
+        if (peek_token(us)->type == T_SEMICOLON)
+            next_token(us);
+        return unit;
+    }
     }
 }
 
@@ -96,7 +101,12 @@ StatementUnit *scan_identifier(UnitScanner *us)
 
     Token *t = (Token *)vector_get(us->tokens, us->pos + 1);
     if (!t)
-        return scan_decl_or_expression(us, 0);
+    {
+        StatementUnit *unit = scan_decl_or_expression(us);
+        if (peek_token(us)->type == T_SEMICOLON)
+            next_token(us);
+        return unit;
+    }
 
     switch (t->type)
     {
@@ -141,7 +151,15 @@ StatementUnit *scan_identifier(UnitScanner *us)
 
     case T_INC: // ++
     case T_DEC: // --
-        return scan_decl_or_expression(us, 0);
+
+    case T_IDENTIFIER:
+    {
+        StatementUnit *unit = scan_decl_or_expression(us);
+        if (peek_token(us)->type == T_SEMICOLON)
+            next_token(us);
+        return unit;
+    }
+    break;
     default:
         return NULL;
     }
