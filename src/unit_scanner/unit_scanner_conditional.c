@@ -84,7 +84,35 @@ StatementUnit *scan_case(UnitScanner *us)
     size_t pos = us->pos;
     next_token(us); // case
 
-    StatementUnit *expr = scan_decl_or_expression(us);
+    // StatementUnit *expr = scan_identifier(us);
+    size_t expr_pos = us->pos;
+    size_t depth = 0;
+    while (peek_token(us)->type != T_EOF)
+    {
+        if (peek_token(us)->type == T_LEFT_BRACE)
+            depth++;
+        else if (peek_token(us)->type == T_RIGHT_BRACE)
+        {
+            if (depth)
+                depth--;
+            else
+            {
+                next_token(us); // )
+                break;
+            }
+        }
+        else if (depth == 0)
+        {
+            if (peek_token(us)->type == T_COLON)
+                break;
+        }
+        next_token(us);
+    }
+    if (peek_token(us)->type == T_EOF)
+        return NULL;
+
+    StatementUnit *expr = make_decl_or_expr_statement_unit(
+        vector_slice(us->tokens, expr_pos, us->pos));
 
     if (peek_token(us)->type != T_COLON)
     {

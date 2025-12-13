@@ -25,6 +25,8 @@ int main(int argc, char **argv)
     case STAGE_IR:
         fprintf(stderr, "AST stage not implemented yet\n");
         break;
+    default:
+        break;
     }
     return 0;
 }

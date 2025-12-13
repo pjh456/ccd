@@ -28,7 +28,7 @@ StatementUnit *scan_decl_or_expression(UnitScanner *us)
         }
         else if (depth == 0)
         {
-            if (t == T_SEMICOLON || t == T_LEFT_BRACE || t == T_COLON)
+            if (t == T_SEMICOLON || t == T_LEFT_BRACE)
                 break;
         }
 

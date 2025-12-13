@@ -112,8 +112,6 @@ StatementUnit *scan_identifier(UnitScanner *us)
     {
     case T_COLON:
         return scan_label(us);
-    case T_LEFT_PAREN:
-    case T_COMMA:
 
     case T_AND:         // &
     case T_OR:          // |
@@ -151,6 +149,15 @@ StatementUnit *scan_identifier(UnitScanner *us)
 
     case T_INC: // ++
     case T_DEC: // --
+
+    case T_COMMA:
+    case T_SEMICOLON:
+    case T_DOT:
+    case T_ARROW:
+    case T_QUESTION:
+
+    case T_LEFT_PAREN:
+    case T_LEFT_BRACKET:
 
     case T_IDENTIFIER:
     {
