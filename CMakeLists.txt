@@ -7,12 +7,6 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 add_compile_options(-Wall -Wextra -Werror)
 
-# file(GLOB_RECURSE CCD_HEADERS
-# ${PROJECT_SOURCE_DIR}/include/*.h
-# )
-
-# include_directories(${PROJECT_SOURCE_DIR}/include)
-# add_library(ccd STATIC ${CCD_HEADERS})
 add_subdirectory(src)
 
 add_executable(ccd_cli src/main.c)
@@ -20,3 +14,19 @@ target_link_libraries(ccd_cli ccd)
 
 enable_testing()
 add_subdirectory(tests)
+
+file(GLOB_RECURSE CCD_SELF_FILES
+    ${PROJECT_SOURCE_DIR}/include/*.h
+    ${PROJECT_SOURCE_DIR}/src/*.c
+)
+
+foreach(test_file IN LISTS CCD_SELF_FILES)
+    # 生成一个合法的测试名
+    string(REPLACE "/" "_" test_name ${test_file})
+    string(REPLACE "\\" "_" test_name ${test_name})
+
+    add_test(
+        NAME parse_${test_name}
+        COMMAND ccd_cli -U ${test_file}
+    )
+endforeach()
