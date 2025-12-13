@@ -71,32 +71,41 @@ StatementUnit *scan_decl_or_expression(UnitScanner *us, int no_semicolon)
     }
 
     size_t pos = us->pos;
-    size_t depth = 0;
+    size_t paren_depth = 0;
+    size_t brace_depth = 0;
     while (peek_token(us)->type != T_EOF)
     {
-        if (no_semicolon)
+        TokenType t = peek_token(us)->type;
+
+        if (t == T_LEFT_PAREN)
+            paren_depth++;
+        else if (t == T_RIGHT_PAREN)
         {
-            if (peek_token(us)->type == T_LEFT_PAREN)
-                depth++;
-            else if (peek_token(us)->type == T_RIGHT_PAREN)
-            {
-                if (depth)
-                    depth--;
-                else
-                    break;
-            }
-            else if (peek_token(us)->type == T_COLON)
-                break;
-            else if (peek_token(us)->type == T_SEMICOLON)
+            if (paren_depth > 0)
+                paren_depth--;
+            else if (no_semicolon)
                 break;
         }
-        else
+        else if (t == T_LEFT_BRACE)
+            brace_depth++;
+        else if (t == T_RIGHT_BRACE)
         {
-            if (peek_token(us)->type == T_SEMICOLON)
-            {
+            if (brace_depth > 0)
+                brace_depth--;
+        }
+        else if (t == T_COLON &&
+                 paren_depth == 0 &&
+                 brace_depth == 0)
+        {
+            break; // label / case
+        }
+        else if (t == T_SEMICOLON &&
+                 paren_depth == 0 &&
+                 brace_depth == 0)
+        {
+            if (!no_semicolon)
                 next_token(us);
-                break;
-            }
+            break;
         }
         next_token(us);
     }
