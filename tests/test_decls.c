@@ -1,155 +1,240 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "vector.h"
+#include <string.h>
 
-/* ===== 引入你的头文件 ===== */
+#include "vector.h"
+#include "decl_parser_impl/decl_unit.h"
 #include "decl_parser_impl/decl_specifier.h"
 #include "decl_parser_impl/decl_specifier_impl/sue_types.h"
 #include "decl_parser_impl/declarator.h"
+#include "decl_parser_impl/declarator_impl/decl_initializer.h"
 #include "decl_parser_impl/declarator_impl/decl_param.h"
+#include "unit_scanner_impl/statement_unit.h"
 
-/* ========================= */
-
-static void separator(const char *title)
+Vector *vec_new_ptr(void)
 {
-    printf("\n================ %s ================\n", title);
+    return vector_new(sizeof(void *));
 }
+
+void vec_push(Vector *v, void *p)
+{
+    vector_push_back(v, &p);
+}
+
+// -----------------------------
+// 构造一些最小 StatementUnit
+// -----------------------------
+
+StatementUnit *fake_expr_stmt(const char *repr)
+{
+    // tokens 仅用于打印，不关心内容
+    Vector *tokens = vec_new_ptr();
+    (void)repr;
+    return make_decl_or_expr_statement_unit(tokens);
+}
+
+// -----------------------------
+// 测试 1：int a;
+// -----------------------------
+
+void test_simple_decl(void)
+{
+    printf("\n=== test_simple_decl ===\n");
+
+    DeclSpecifier *spec = make_decl_specifier(
+        DBT_INT,
+        DSUE_NONE,
+        0, 0, 0, 0);
+
+    Declarator *id = make_identifier_declarator(strdup("a"));
+    DeclInitializer *di = make_decl_initializer(id, NULL);
+
+    Vector *decls = vec_new_ptr();
+    vec_push(decls, di);
+
+    DeclUnit *unit = make_declaration_decl_unit(spec, decls);
+    print_decl_unit(unit);
+
+    decl_unit_free(unit);
+}
+
+// -----------------------------
+// 测试 2：static const unsigned long *p;
+// -----------------------------
+
+void test_pointer_decl(void)
+{
+    printf("\n=== test_pointer_decl ===\n");
+
+    DeclSpecifier *spec = make_decl_specifier(
+        DBT_INT,
+        DSUE_NONE,
+        DS_STATIC,
+        0,
+        DTQ_CONST,
+        DTM_UNSIGNED | DTM_LONG);
+
+    Declarator *id = make_identifier_declarator(strdup("p"));
+    Declarator *ptr = make_pointer_declarator(id, DTQ_NONE);
+
+    DeclInitializer *di = make_decl_initializer(ptr, NULL);
+
+    Vector *decls = vec_new_ptr();
+    vec_push(decls, di);
+
+    DeclUnit *unit = make_declaration_decl_unit(spec, decls);
+    print_decl_unit(unit);
+
+    decl_unit_free(unit);
+}
+
+// -----------------------------
+// 测试 3：int arr[10];
+// -----------------------------
+
+void test_array_decl(void)
+{
+    printf("\n=== test_array_decl ===\n");
+
+    DeclSpecifier *spec = make_decl_specifier(
+        DBT_INT,
+        DSUE_NONE,
+        0, 0, 0, 0);
+
+    Declarator *id = make_identifier_declarator(strdup("arr"));
+    Declarator *arr = make_array_declarator(id, 10);
+
+    DeclInitializer *di = make_decl_initializer(arr, NULL);
+
+    Vector *decls = vec_new_ptr();
+    vec_push(decls, di);
+
+    DeclUnit *unit = make_declaration_decl_unit(spec, decls);
+    print_decl_unit(unit);
+
+    decl_unit_free(unit);
+}
+
+// -----------------------------
+// 测试 4：int f(int a, float b);
+// -----------------------------
+
+void test_function_decl(void)
+{
+    printf("\n=== test_function_decl ===\n");
+
+    // 返回类型
+    DeclSpecifier *spec = make_decl_specifier(
+        DBT_INT,
+        DSUE_NONE,
+        0, 0, 0, 0);
+
+    // 参数 a
+    DeclSpecifier *ps1 = make_decl_specifier(DBT_INT, DSUE_NONE, 0, 0, 0, 0);
+    Declarator *pd1 = make_identifier_declarator(strdup("a"));
+    DeclParam *p1 = make_decl_param(strdup("a"), ps1, pd1);
+
+    // 参数 b
+    DeclSpecifier *ps2 = make_decl_specifier(DBT_FLOAT, DSUE_NONE, 0, 0, 0, 0);
+    Declarator *pd2 = make_identifier_declarator(strdup("b"));
+    DeclParam *p2 = make_decl_param(strdup("b"), ps2, pd2);
+
+    Vector *params = vec_new_ptr();
+    vec_push(params, p1);
+    vec_push(params, p2);
+
+    Declarator *id = make_identifier_declarator(strdup("f"));
+    Declarator *fn = make_function_declarator(id, params, 0);
+
+    DeclInitializer *di = make_decl_initializer(fn, NULL);
+
+    Vector *decls = vec_new_ptr();
+    vec_push(decls, di);
+
+    DeclUnit *unit = make_declaration_decl_unit(spec, decls);
+    print_decl_unit(unit);
+
+    decl_unit_free(unit);
+}
+
+// -----------------------------
+// 测试 5：int a = 1;
+// -----------------------------
+
+void test_initializer_decl(void)
+{
+    printf("\n=== test_initializer_decl ===\n");
+
+    DeclSpecifier *spec = make_decl_specifier(
+        DBT_INT,
+        DSUE_NONE,
+        0, 0, 0, 0);
+
+    Declarator *id = make_identifier_declarator(strdup("a"));
+    StatementUnit *init_expr = fake_expr_stmt("1");
+
+    DeclUnit *init_unit = make_expression_decl_unit(init_expr);
+    DeclInitializer *di = make_decl_initializer(id, init_unit);
+
+    Vector *decls = vec_new_ptr();
+    vec_push(decls, di);
+
+    DeclUnit *unit = make_declaration_decl_unit(spec, decls);
+    print_decl_unit(unit);
+
+    decl_unit_free(unit);
+}
+
+// -----------------------------
+// 测试 6：struct S { int x; float y; };
+// -----------------------------
+
+void test_struct_decl(void)
+{
+    printf("\n=== test_struct_decl ===\n");
+
+    // field x
+    DeclField *fx = calloc(1, sizeof(*fx));
+    fx->name = strdup("x");
+    fx->spec = make_decl_specifier(DBT_INT, DSUE_NONE, 0, 0, 0, 0);
+    fx->decl = make_identifier_declarator(strdup("x"));
+
+    // field y
+    DeclField *fy = calloc(1, sizeof(*fy));
+    fy->name = strdup("y");
+    fy->spec = make_decl_specifier(DBT_FLOAT, DSUE_NONE, 0, 0, 0, 0);
+    fy->decl = make_identifier_declarator(strdup("y"));
+
+    Vector *fields = vec_new_ptr();
+    vec_push(fields, fx);
+    vec_push(fields, fy);
+
+    DeclStructType *st = make_decl_struct_type("S", fields);
+
+    DeclSpecifier *spec = make_decl_specifier(
+        DBT_NONE,
+        DSUE_STRUCT,
+        0, 0, 0, 0);
+    spec->struct_type = st;
+
+    Vector *decls = vec_new_ptr();
+    DeclUnit *unit = make_declaration_decl_unit(spec, decls);
+    print_decl_unit(unit);
+
+    decl_unit_free(unit);
+}
+
+// -----------------------------
+// main
+// -----------------------------
 
 int main(void)
 {
-    /* ========== 1. int a; ========== */
-    separator("int a");
-
-    DeclSpecifier *spec_int =
-        make_decl_specifier(DBT_INT, DSUE_NONE, 0, 0, 0, 0);
-
-    Declarator *decl_a =
-        make_identifier_declarator("a");
-
-    print_decl_specifier(spec_int);
-    print_declarator(decl_a);
-
-    decl_specifier_free(spec_int);
-    declarator_free(decl_a);
-
-    /* ========== 2. const int *p; ========== */
-    separator("const int *p");
-
-    DeclSpecifier *spec_const_int =
-        make_decl_specifier(DBT_INT, DSUE_NONE, 0, 0, DTQ_CONST, 0);
-
-    Declarator *decl_p =
-        make_pointer_declarator(
-            make_identifier_declarator("p"),
-            0 /* pointer 自身无 qualifier */
-        );
-
-    print_decl_specifier(spec_const_int);
-    print_declarator(decl_p);
-
-    decl_specifier_free(spec_const_int);
-    declarator_free(decl_p);
-
-    /* ========== 3. double arr[10]; ========== */
-    separator("double arr[10]");
-
-    DeclSpecifier *spec_double =
-        make_decl_specifier(DBT_DOUBLE, DSUE_NONE, 0, 0, 0, 0);
-
-    Declarator *decl_arr =
-        make_array_declarator(
-            make_identifier_declarator("arr"),
-            10);
-
-    print_decl_specifier(spec_double);
-    print_declarator(decl_arr);
-
-    decl_specifier_free(spec_double);
-    declarator_free(decl_arr);
-
-    /* ========== 4. int f(int x, double y); ========== */
-    separator("int f(int x, double y)");
-
-    Vector *params = vector_new(sizeof(DeclParam *));
-
-    DeclSpecifier *spec_param_int =
-        make_decl_specifier(DBT_INT, DSUE_NONE, 0, 0, 0, 0);
-    Declarator *decl_x =
-        make_identifier_declarator("x");
-    vector_push_back(
-        params,
-        &(DeclParam *){make_decl_param("x", spec_param_int, decl_x)});
-
-    DeclSpecifier *spec_param_double =
-        make_decl_specifier(DBT_DOUBLE, DSUE_NONE, 0, 0, 0, 0);
-    Declarator *decl_y =
-        make_identifier_declarator("y");
-    vector_push_back(
-        params,
-        &(DeclParam *){make_decl_param("y", spec_param_double, decl_y)});
-
-    DeclSpecifier *spec_func =
-        make_decl_specifier(DBT_INT, DSUE_NONE, 0, 0, 0, 0);
-
-    Declarator *decl_func =
-        make_function_declarator(
-            make_identifier_declarator("f"),
-            params,
-            0);
-
-    print_decl_specifier(spec_func);
-    print_declarator(decl_func);
-
-    decl_specifier_free(spec_func);
-    declarator_free(decl_func);
-
-    /* ========== 5. int (*fp)(int); ========== */
-    separator("int (*fp)(int)");
-
-    Vector *fp_params = vector_new(sizeof(DeclParam *));
-
-    DeclSpecifier *spec_fp_param =
-        make_decl_specifier(DBT_INT, DSUE_NONE, 0, 0, 0, 0);
-    Declarator *decl_fp_x =
-        make_identifier_declarator("x");
-
-    vector_push_back(fp_params,
-                     &(DeclParam *){make_decl_param("x", spec_fp_param, decl_fp_x)});
-
-    Declarator *fp_decl =
-        make_function_declarator(
-            make_pointer_declarator(
-                make_identifier_declarator("fp"),
-                0),
-            fp_params,
-            0);
-
-    DeclSpecifier *spec_fp =
-        make_decl_specifier(DBT_INT, DSUE_NONE, 0, 0, 0, 0);
-
-    print_decl_specifier(spec_fp);
-    print_declarator(fp_decl);
-
-    decl_specifier_free(spec_fp);
-    declarator_free(fp_decl);
-
-    /* ========== 6. struct S s; ========== */
-    separator("struct S s");
-
-    DeclStructType *st = make_decl_struct_type("S", NULL);
-
-    DeclSpecifier *spec_struct =
-        make_decl_specifier(DBT_NONE, DSUE_STRUCT, 0, 0, 0, 0);
-    spec_struct->struct_type = st;
-
-    Declarator *decl_s =
-        make_identifier_declarator("s");
-
-    print_decl_specifier(spec_struct);
-    print_declarator(decl_s);
-
-    decl_specifier_free(spec_struct);
-    declarator_free(decl_s);
-
+    test_simple_decl();
+    test_pointer_decl();
+    test_array_decl();
+    test_function_decl();
+    test_initializer_decl();
+    test_struct_decl();
     return 0;
 }
