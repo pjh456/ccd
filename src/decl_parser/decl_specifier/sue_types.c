@@ -1,6 +1,7 @@
 #include "decl_parser_impl/decl_specifier.h"
 #include "decl_parser_impl/decl_specifier_impl/sue_types.h"
 #include "decl_parser_impl/declarator.h"
+#include "decl_parser_impl/declarator_impl/decl_initializer.h"
 #include "vector.h"
 #include "utils.h"
 #include <stdlib.h>
@@ -113,15 +114,42 @@ void decl_enum_type_free(DeclEnumType *det)
     free(det);
 }
 
+DeclField *make_decl_field(DeclSpecifier *spec, Vector *decls)
+{
+    if (!spec || !decls)
+        return NULL;
+    DeclField *field = calloc(1, sizeof(*field));
+
+    field->spec = spec;
+    field->decls = decls;
+
+    return field;
+}
+
 void decl_field_free(DeclField *df)
 {
     if (!df)
         return;
-    if (df->name)
-        free(df->name);
     decl_specifier_free(df->spec);
-    declarator_free(df->decl);
+    if (df->decls)
+    {
+        for (size_t idx = 0; idx < df->decls->size; ++idx)
+            decl_initializer_free(*((DeclInitializer **)vector_get(df->decls, idx)));
+        vector_free(df->decls);
+    }
     free(df);
+}
+
+DeclEnumItem *make_decl_enum_item(const char *name, int has_value, long long value)
+{
+    DeclEnumItem *item = calloc(1, sizeof(*item));
+
+    item->name = str_clone(name);
+    item->has_value = has_value;
+    if (has_value)
+        item->value = value;
+
+    return item;
 }
 
 void decl_enum_item_free(DeclEnumItem *dei)

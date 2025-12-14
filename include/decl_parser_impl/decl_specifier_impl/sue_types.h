@@ -8,12 +8,12 @@ typedef struct DeclUnionType DeclUnionType;
 typedef struct DeclEnumType DeclEnumType;
 typedef struct DeclSpecifier DeclSpecifier;
 typedef struct Declarator Declarator;
+typedef struct DeclInitializer DeclInitializer;
 
 struct DeclField
 {
-    char *name;
     DeclSpecifier *spec;
-    Declarator *decl;
+    Vector *decls; // DeclInitializer
 };
 
 struct DeclEnumItem
@@ -56,5 +56,8 @@ DeclEnumType *make_decl_enum_type(const char *name, Vector *items);
 void complete_decl_enum_type(DeclEnumType *det, Vector *items);
 void decl_enum_type_free(DeclEnumType *det);
 
+DeclField *make_decl_field(DeclSpecifier *spec, Vector *decls);
 void decl_field_free(DeclField *df);
+
+DeclEnumItem *make_decl_enum_item(const char *name, int has_value, long long value);
 void decl_enum_item_free(DeclEnumItem *dei);
