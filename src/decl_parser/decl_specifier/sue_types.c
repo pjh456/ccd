@@ -1,4 +1,6 @@
+#include "decl_parser_impl/decl_specifier.h"
 #include "decl_parser_impl/decl_specifier_impl/sue_types.h"
+#include "decl_parser_impl/declarator.h"
 #include "vector.h"
 #include "utils.h"
 #include <stdlib.h>
@@ -13,6 +15,21 @@ DeclStructType *make_decl_struct_type(const char *name, Vector *fields)
         complete_decl_struct_type(dst, fields);
 
     return dst;
+}
+
+void decl_struct_type_free(DeclStructType *dst)
+{
+    if (!dst)
+        return;
+    if (dst->name)
+        free(dst->name);
+    if (dst->fields)
+    {
+        for (size_t idx = 0; idx < dst->fields->size; ++idx)
+            decl_field_free(*((DeclField **)vector_get(dst->fields, idx)));
+        vector_free(dst->fields);
+    }
+    free(dst);
 }
 
 void complete_decl_struct_type(DeclStructType *dst, Vector *fields)
@@ -45,6 +62,21 @@ void complete_decl_union_type(DeclUnionType *dut, Vector *fields)
     dut->is_complete = 1;
 }
 
+void decl_union_type_free(DeclUnionType *dut)
+{
+    if (!dut)
+        return;
+    if (dut->name)
+        free(dut->name);
+    if (dut->fields)
+    {
+        for (size_t idx = 0; idx < dut->fields->size; ++idx)
+            decl_field_free(*((DeclField **)vector_get(dut->fields, idx)));
+        vector_free(dut->fields);
+    }
+    free(dut);
+}
+
 DeclEnumType *make_decl_enum_type(const char *name, Vector *items)
 {
     DeclEnumType *det = malloc(sizeof(*det));
@@ -64,4 +96,39 @@ void complete_decl_enum_type(DeclEnumType *det, Vector *items)
 
     det->items = items;
     det->is_complete = 1;
+}
+
+void decl_enum_type_free(DeclEnumType *det)
+{
+    if (!det)
+        return;
+    if (det->name)
+        free(det->name);
+    if (det->items)
+    {
+        for (size_t idx = 0; idx < det->items->size; ++idx)
+            decl_enum_item_free(*((DeclEnumItem **)vector_get(det->items, idx)));
+        vector_free(det->items);
+    }
+    free(det);
+}
+
+void decl_field_free(DeclField *df)
+{
+    if (!df)
+        return;
+    if (df->name)
+        free(df->name);
+    decl_specifier_free(df->spec);
+    declarator_free(df->decl);
+    free(df);
+}
+
+void decl_enum_item_free(DeclEnumItem *dei)
+{
+    if (!dei)
+        return;
+    if (dei->name)
+        free(dei->name);
+    free(dei);
 }

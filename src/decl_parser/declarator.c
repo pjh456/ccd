@@ -1,8 +1,12 @@
 #include "decl_parser_impl/declarator.h"
-#include "decl_parser_impl/decl_specifier_impl/decl_param.h"
+#include "decl_parser_impl/declarator_impl/declarator_impl.h"
+#include "decl_parser_impl/declarator_impl/decl_param.h"
+#include "decl_parser_impl/decl_specifier.h"
+#include "decl_parser_impl/decl_specifier_impl/decl_specifier_impl.h"
 #include "vector.h"
 #include "utils.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 Declarator *make_identifier_declarator(char *name)
 {
@@ -76,4 +80,105 @@ void declarator_free(Declarator *decl)
         break;
     }
     free(decl);
+}
+
+void print_declarator(Declarator *d)
+{
+    print_declarator_impl(d, 0);
+}
+
+void print_declarator_impl(Declarator *d, int indent)
+{
+    if (!d)
+    {
+        print_indent(indent);
+        printf("<null Declarator>\n");
+        return;
+    }
+
+    switch (d->type)
+    {
+    case DRT_IDENT:
+        print_indent(indent);
+        printf("Declarator: IDENT \"%s\"\n",
+               d->ident.name ? d->ident.name : "<anonymous>");
+        break;
+
+    case DRT_POINTER:
+        print_indent(indent);
+        printf("Declarator: POINTER\n");
+
+        if (d->pointer.qualifiers)
+        {
+            print_indent(indent + 4);
+            printf("Qualifiers:");
+            print_decl_qualifiers(d->pointer.qualifiers);
+            printf("\n");
+        }
+
+        print_indent(indent + 4);
+        printf("Inner:\n");
+        print_declarator_impl(d->pointer.inner, indent + 8);
+        break;
+
+    case DRT_ARRAY:
+        print_indent(indent);
+        printf("Declarator: ARRAY\n");
+
+        print_indent(indent + 4);
+        printf("Length: ");
+        if (d->array.length)
+            printf("%zu\n", d->array.length);
+        else
+            printf("<unspecified>\n");
+
+        print_indent(indent + 4);
+        printf("Element:\n");
+        print_declarator_impl(d->array.inner, indent + 8);
+        break;
+
+    case DRT_FUNCTION:
+        print_indent(indent);
+        printf("Declarator: FUNCTION\n");
+
+        print_indent(indent + 4);
+        printf("Return:\n");
+        print_declarator_impl(d->function.inner, indent + 8);
+
+        print_indent(indent + 4);
+        printf("Parameters:\n");
+
+        if (!d->function.params || d->function.params->size == 0)
+        {
+            print_indent(indent + 8);
+            printf("(none)\n");
+        }
+        else
+        {
+            for (size_t i = 0; i < d->function.params->size; i++)
+            {
+                DeclParam *p = *((DeclParam **)vector_get(d->function.params, i));
+
+                print_indent(indent + 8);
+                printf("Param %zu: %s\n",
+                       i,
+                       p->name ? p->name : "<anonymous>");
+
+                print_indent(indent + 12);
+                printf("Specifier:\n");
+                print_decl_specifier_impl(p->spec, indent + 16);
+
+                print_indent(indent + 12);
+                printf("Declarator:\n");
+                print_declarator_impl(p->decl, indent + 16);
+            }
+        }
+
+        if (d->function.is_variadic)
+        {
+            print_indent(indent + 4);
+            printf("Variadic: yes\n");
+        }
+        break;
+    }
 }

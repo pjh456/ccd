@@ -1,9 +1,9 @@
 #pragma once
 
 typedef struct Vector Vector;
-typedef struct StructType StructType;
-typedef struct UnionType UnionType;
-typedef struct EnumType EnumType;
+typedef struct DeclStructType DeclStructType;
+typedef struct DeclUnionType DeclUnionType;
+typedef struct DeclEnumType DeclEnumType;
 typedef struct DeclSpecifier DeclSpecifier;
 
 typedef enum
@@ -35,6 +35,13 @@ typedef enum
 
 typedef enum
 {
+    DFS_NONE = 0,
+    DFS_INLINE = 1 << 0,
+    DFS_NORETURN = 1 << 1
+} DeclFuncSpecifieer;
+
+typedef enum
+{
     DTQ_NONE = 0,
     DTQ_CONST = 1 << 0,
     DTQ_VOLATILE = 1 << 1,
@@ -44,10 +51,11 @@ typedef enum
 typedef enum
 {
     DTM_NONE = 0,
-    DTM_UNSIGNED = 1 << 0,
-    DTM_SHORT = 1 << 1,
-    DTM_LONG = 1 << 2,
-    DTM_LONGLONG = 1 << 3,
+    DTM_SIGNED = 1 << 0,
+    DTM_UNSIGNED = 1 << 1,
+    DTM_SHORT = 1 << 2,
+    DTM_LONG = 1 << 3,
+    DTM_LONGLONG = 1 << 4,
 } DeclTypeModifier;
 
 struct DeclSpecifier
@@ -63,9 +71,9 @@ struct DeclSpecifier
 
     union
     {
-        StructType *struct_type;
-        UnionType *union_type;
-        EnumType *enum_type;
+        DeclStructType *struct_type;
+        DeclUnionType *union_type;
+        DeclEnumType *enum_type;
     };
 };
 
@@ -78,3 +86,11 @@ DeclSpecifier *make_decl_specifier(
     unsigned modifiers);
 
 void decl_specifier_free(DeclSpecifier *ds);
+
+const char *builtin_type_name(DeclBuiltinType t);
+
+void print_decl_storages(unsigned s);
+void print_decl_func_specifiers(unsigned fs);
+void print_decl_qualifiers(unsigned q);
+void print_decl_modifiers(unsigned mods);
+void print_decl_specifier(DeclSpecifier *ds);

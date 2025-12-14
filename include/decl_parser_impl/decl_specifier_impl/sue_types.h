@@ -55,3 +55,6 @@ void decl_union_type_free(DeclUnionType *dut);
 DeclEnumType *make_decl_enum_type(const char *name, Vector *items);
 void complete_decl_enum_type(DeclEnumType *det, Vector *items);
 void decl_enum_type_free(DeclEnumType *det);
+
+void decl_field_free(DeclField *df);
+void decl_enum_item_free(DeclEnumItem *dei);

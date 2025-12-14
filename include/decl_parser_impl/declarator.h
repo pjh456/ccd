@@ -50,3 +50,5 @@ Declarator *make_array_declarator(Declarator *inner, size_t length);
 Declarator *make_function_declarator(Declarator *inner, Vector *params, int is_variadic);
 
 void declarator_free(Declarator *decl);
+
+void print_declarator(Declarator *decl);

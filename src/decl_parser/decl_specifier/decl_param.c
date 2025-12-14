@@ -1,4 +1,5 @@
-#include "decl_parser_impl/decl_specifier_impl/decl_param.h"
+#include "decl_parser_impl/declarator.h"
+#include "decl_parser_impl/declarator_impl/decl_param.h"
 #include "decl_parser_impl/decl_specifier.h"
 #include "decl_parser_impl/declarator.h"
 #include "utils.h"
