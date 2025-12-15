@@ -128,7 +128,7 @@ void print_decl_specifier_impl(DeclSpecifier *ds, int indent)
     /* storage */
     if (ds->storages)
     {
-        print_indent(indent + 4);
+        print_indent(indent + 2);
         printf("Storage:");
         print_decl_storages(ds->storages);
         printf("\n");
@@ -137,7 +137,7 @@ void print_decl_specifier_impl(DeclSpecifier *ds, int indent)
     /* function specifiers */
     if (ds->func_specifiers)
     {
-        print_indent(indent + 4);
+        print_indent(indent + 2);
         printf("Func-specifiers:");
         print_decl_func_specifiers(ds->func_specifiers);
         printf("\n");
@@ -146,7 +146,7 @@ void print_decl_specifier_impl(DeclSpecifier *ds, int indent)
     /* qualifiers */
     if (ds->qualifiers)
     {
-        print_indent(indent + 4);
+        print_indent(indent + 2);
         printf("Qualifiers:");
         print_decl_qualifiers(ds->qualifiers);
         printf("\n");
@@ -155,14 +155,14 @@ void print_decl_specifier_impl(DeclSpecifier *ds, int indent)
     /* modifiers */
     if (ds->modifiers)
     {
-        print_indent(indent + 4);
+        print_indent(indent + 2);
         printf("Modifiers:");
         print_decl_modifiers(ds->modifiers);
         printf("\n");
     }
 
     /* base type */
-    print_indent(indent + 4);
+    print_indent(indent + 2);
     printf("Base type: ");
 
     if (ds->builtin_type != DBT_NONE)
@@ -171,25 +171,17 @@ void print_decl_specifier_impl(DeclSpecifier *ds, int indent)
     }
     else if (ds->sue_type != DSUE_NONE)
     {
+        puts("");
         switch (ds->sue_type)
         {
         case DSUE_STRUCT:
-            printf("struct %s\n",
-                   ds->struct_type && ds->struct_type->name
-                       ? ds->struct_type->name
-                       : "<anonymous>");
+            print_decl_struct_impl(ds->struct_type, indent + 2);
             break;
         case DSUE_UNION:
-            printf("union %s\n",
-                   ds->union_type && ds->union_type->name
-                       ? ds->union_type->name
-                       : "<anonymous>");
+            print_decl_union_impl(ds->union_type, indent + 2);
             break;
         case DSUE_ENUM:
-            printf("enum %s\n",
-                   ds->enum_type && ds->enum_type->name
-                       ? ds->enum_type->name
-                       : "<anonymous>");
+            print_decl_enum_impl(ds->enum_type, indent + 2);
             break;
         default:
             printf("<unknown SUE>\n");

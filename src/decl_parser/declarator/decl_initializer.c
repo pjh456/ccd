@@ -1,4 +1,5 @@
 #include "decl_parser_impl/declarator_impl/decl_initializer.h"
+#include "decl_parser_impl/declarator_impl/declarator_impl.h"
 #include "decl_parser_impl/declarator.h"
 #include "decl_parser_impl/decl_unit.h"
 #include "decl_parser_impl/declarator_impl/declarator_impl.h"
@@ -28,8 +29,6 @@ void decl_initializer_free(DeclInitializer *di)
     free(di);
 }
 
-void print_decl_initializer_impl(DeclInitializer *di, int indent);
-
 void print_decl_initializer(DeclInitializer *di)
 {
     print_decl_initializer_impl(di, 0);
@@ -48,38 +47,38 @@ void print_decl_initializer_impl(DeclInitializer *di, int indent)
     printf("InitDeclarator:\n");
 
     /* declarator */
-    print_indent(indent + 4);
+    print_indent(indent + 2);
     printf("Declarator:\n");
-    print_declarator_impl(di->decl, indent + 8);
+    print_declarator_impl(di->decl, indent + 4);
 
     /* initializer */
     if (!di->init)
     {
-        print_indent(indent + 4);
+        print_indent(indent + 2);
         printf("Initializer: <none>\n");
         return;
     }
 
-    print_indent(indent + 4);
+    print_indent(indent + 2);
     printf("Initializer:\n");
 
     /* 这里只打印 expression / statement 的原始形态 */
     switch (di->init->type)
     {
     case DUT_EXPRESSION:
-        print_indent(indent + 8);
+        print_indent(indent + 4);
         printf("Expression (raw):\n");
         print_statement_unit_impl(di->init->expr.origin, indent + 12, 0);
         break;
 
     case DUT_STATEMENT:
-        print_indent(indent + 8);
+        print_indent(indent + 4);
         printf("Statement (raw):\n");
         print_statement_unit_impl(di->init->stmt.stmt, indent + 12, 0);
         break;
 
     case DUT_DELARATION:
-        print_indent(indent + 8);
+        print_indent(indent + 4);
         printf("Declaration (unexpected in initializer)\n");
         break;
     }

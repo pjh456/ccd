@@ -110,47 +110,47 @@ void print_declarator_impl(Declarator *d, int indent)
 
         if (d->pointer.qualifiers)
         {
-            print_indent(indent + 4);
+            print_indent(indent + 2);
             printf("Qualifiers:");
             print_decl_qualifiers(d->pointer.qualifiers);
             printf("\n");
         }
 
-        print_indent(indent + 4);
+        print_indent(indent + 2);
         printf("Inner:\n");
-        print_declarator_impl(d->pointer.inner, indent + 8);
+        print_declarator_impl(d->pointer.inner, indent + 4);
         break;
 
     case DRT_ARRAY:
         print_indent(indent);
         printf("Declarator: ARRAY\n");
 
-        print_indent(indent + 4);
+        print_indent(indent + 2);
         printf("Length: ");
         if (d->array.length)
             printf("%zu\n", d->array.length);
         else
             printf("<unspecified>\n");
 
-        print_indent(indent + 4);
+        print_indent(indent + 2);
         printf("Element:\n");
-        print_declarator_impl(d->array.inner, indent + 8);
+        print_declarator_impl(d->array.inner, indent + 4);
         break;
 
     case DRT_FUNCTION:
         print_indent(indent);
         printf("Declarator: FUNCTION\n");
 
-        print_indent(indent + 4);
+        print_indent(indent + 2);
         printf("Return:\n");
-        print_declarator_impl(d->function.inner, indent + 8);
+        print_declarator_impl(d->function.inner, indent + 4);
 
-        print_indent(indent + 4);
+        print_indent(indent + 2);
         printf("Parameters:\n");
 
         if (!d->function.params || d->function.params->size == 0)
         {
-            print_indent(indent + 8);
+            print_indent(indent + 4);
             printf("(none)\n");
         }
         else
@@ -159,18 +159,18 @@ void print_declarator_impl(Declarator *d, int indent)
             {
                 DeclParam *p = *((DeclParam **)vector_get(d->function.params, i));
 
-                print_indent(indent + 8);
+                print_indent(indent + 4);
                 printf("Param %zu: %s\n",
                        i,
                        p->name ? p->name : "<anonymous>");
 
-                print_indent(indent + 12);
+                print_indent(indent + 6);
                 printf("Specifier:\n");
-                print_decl_specifier_impl(p->spec, indent + 16);
+                print_decl_specifier_impl(p->spec, indent + 8);
 
-                print_indent(indent + 12);
+                print_indent(indent + 6);
                 printf("Declarator:\n");
-                print_declarator_impl(p->decl, indent + 16);
+                print_declarator_impl(p->decl, indent + 8);
             }
         }
 
