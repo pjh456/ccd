@@ -32,16 +32,19 @@ void decl_specifier_free(DeclSpecifier *ds)
     switch (ds->sue_type)
     {
     case DSUE_STRUCT:
-        break;
+        decl_struct_type_free(ds->struct_type);
+        return;
     case DSUE_UNION:
-        break;
+        decl_union_type_free(ds->union_type);
+        return;
     case DSUE_ENUM:
-        break;
+        decl_enum_type_free(ds->enum_type);
+        return;
     case DSUE_NONE:
     default:
-        break;
+        free(ds);
+        return;
     }
-    free(ds);
 }
 
 const char *builtin_type_name(DeclBuiltinType t)
