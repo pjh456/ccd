@@ -169,6 +169,7 @@ Declarator *parse_declarator(DeclParser *dp)
     t = peek_token_in_stmt(stmt, dp->token_pos);
     if (!t)
         return decl;
+    int is_suffix_end = 0;
     while (t)
     {
         switch (t->type)
@@ -182,18 +183,24 @@ Declarator *parse_declarator(DeclParser *dp)
                 t = peek_token_in_stmt(stmt, ++dp->token_pos);
 
             dp->token_pos++;
+            if (!t)
+            {
+                is_suffix_end = 1;
+                break;
+            }
 
             Declarator *outer = make_array_declarator(decl, NULL);
 
-            if (dp->token_pos - len_start_pos > 1)
+            if (len_start_pos != dp->token_pos - 1)
                 outer->array.length = make_expression_decl_unit(
                     make_decl_or_expr_statement_unit(
                         vector_slice(
                             stmt->tokens,
                             len_start_pos, dp->token_pos)));
 
-            return outer;
+            decl = outer;
         }
+        break;
         case T_LEFT_PAREN:
         {
             t = peek_token_in_stmt(stmt, ++dp->token_pos);
@@ -211,11 +218,19 @@ Declarator *parse_declarator(DeclParser *dp)
 
             Declarator *outer = make_function_declarator(
                 decl, params, 0);
-            return outer;
+
+            decl = outer;
         }
+        break;
         default:
+            is_suffix_end = 1;
             break;
         }
+
+        if (is_suffix_end)
+            break;
+
+        t = peek_token_in_stmt(stmt, dp->token_pos);
     }
 
     return decl;
@@ -241,7 +256,7 @@ Vector *parse_decl_param_list(DeclParser *dp)
         vector_push_back(params, &param);
 
         t = peek_token_in_stmt(stmt, ++dp->token_pos);
-        if (t->type != T_COMMA)
+        if (!t && t->type != T_COMMA)
             break;
     }
 
