@@ -204,11 +204,16 @@ Declarator *parse_declarator(DeclParser *dp)
         case T_LEFT_PAREN:
         {
             t = peek_token_in_stmt(stmt, ++dp->token_pos);
-            // int is_variadic = 0; // TODO
+            int is_variadic = 0;
 
             Vector *params = parse_decl_param_list(dp);
 
-            if (peek_token_in_stmt(stmt, dp->token_pos)->type != T_RIGHT_PAREN)
+            t = peek_token_in_stmt(stmt, dp->token_pos);
+            if (t && t->type == T_ELLIPSIS)
+                is_variadic = 1, dp->token_pos++;
+
+            t = peek_token_in_stmt(stmt, dp->token_pos);
+            if (!t || t->type != T_RIGHT_PAREN)
             {
                 declarator_free(decl);
                 return NULL;
@@ -217,7 +222,7 @@ Declarator *parse_declarator(DeclParser *dp)
                 dp->token_pos++;
 
             Declarator *outer = make_function_declarator(
-                decl, params, 0);
+                decl, params, is_variadic);
 
             decl = outer;
         }
@@ -256,7 +261,10 @@ Vector *parse_decl_param_list(DeclParser *dp)
         vector_push_back(params, &param);
 
         t = peek_token_in_stmt(stmt, ++dp->token_pos);
-        if (!t && t->type != T_COMMA)
+        if (!t || t->type != T_COMMA)
+            break;
+        t = peek_token_in_stmt(stmt, dp->token_pos + 1);
+        if (t && t->type == T_ELLIPSIS)
             break;
     }
 
