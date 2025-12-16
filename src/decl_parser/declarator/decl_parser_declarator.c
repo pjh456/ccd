@@ -63,7 +63,7 @@ DeclInitializer *parse_decl_initializer(DeclParser *dp)
 
     DeclInitializer *di = NULL;
     Token *t = peek_token_in_stmt(stmt, dp->token_pos);
-    if (t && t->type == T_EQUAL)
+    if (t && t->type == T_ASSIGN)
     {
         t = peek_token_in_stmt(stmt, ++dp->token_pos);
         size_t init_start_pos = dp->token_pos;
