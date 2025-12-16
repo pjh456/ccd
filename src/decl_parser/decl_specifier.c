@@ -102,10 +102,10 @@ void print_decl_modifiers(unsigned mods)
         printf(" signed");
     if (mods & DTM_SHORT)
         printf(" short");
-    if (mods & DTM_LONG)
-        printf(" long");
     if (mods & DTM_LONGLONG)
         printf(" long long");
+    else if (mods & DTM_LONG)
+        printf(" long");
 }
 
 void print_decl_specifier(DeclSpecifier *ds)
