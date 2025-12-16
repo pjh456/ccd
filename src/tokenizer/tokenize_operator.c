@@ -18,6 +18,7 @@ static const OpEntry op_table[] = {
     // ===== 长度 3 =====
     {"<<=", T_LEFT_SHIFT_ASSIGN},
     {">>=", T_RIGHT_SHIFT_ASSIGN},
+    {"...", T_ELLIPSIS},
 
     // ===== 长度 2 =====
     {"->", T_ARROW},

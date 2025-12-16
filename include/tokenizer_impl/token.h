@@ -81,6 +81,7 @@ typedef enum
     T_DOT,       // .
     T_ARROW,     // ->
     T_QUESTION,  // ?
+    T_ELLIPSIS,  // ...
 
     // === C 语言关键字 (C11 标准) ===
     T_EXTERN,   // extern

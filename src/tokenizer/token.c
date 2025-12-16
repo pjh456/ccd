@@ -118,6 +118,8 @@ const char *token_name(TokenType tt)
         return "ARROW";
     case T_QUESTION:
         return "QUESTION";
+    case T_ELLIPSIS:
+        return "ELLIPSIS";
 
     case T_EXTERN:
         return "EXTERN";
