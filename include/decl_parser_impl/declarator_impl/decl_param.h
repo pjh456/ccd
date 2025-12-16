@@ -6,6 +6,7 @@ typedef struct Declarator Declarator;
 
 struct DeclParam
 {
+    char *name;
     DeclSpecifier *spec;
     Declarator *decl;
 };

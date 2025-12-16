@@ -166,7 +166,7 @@ void print_declarator_impl(Declarator *d, int indent)
                 print_indent(indent + 4);
                 printf("Param %zu: %s\n",
                        i,
-                       /*p->name ? p->name :*/ "<anonymous>");
+                       p->name ? p->name : "<anonymous>");
 
                 print_indent(indent + 6);
                 printf("Specifier:\n");
