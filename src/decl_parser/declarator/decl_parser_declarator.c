@@ -49,13 +49,26 @@ DeclInitializer *parse_decl_initializer(DeclParser *dp)
     {
         t = peek_token_in_stmt(stmt, ++dp->token_pos);
         size_t init_start_pos = dp->token_pos;
+        size_t paren_depth = 0;
+        size_t brace_depth = 0;
 
         while (t)
         {
-            if (t->type == T_COMMA)
-                break;
-            else if (t->type == T_SEMICOLON)
-                break;
+            if (t->type == T_LEFT_BRACE)
+                brace_depth++;
+            else if (t->type == T_RIGHT_BRACE)
+                brace_depth--;
+            else if (t->type == T_LEFT_PAREN)
+                paren_depth++;
+            else if (t->type == T_RIGHT_PAREN)
+                paren_depth--;
+            else if (paren_depth == 0 && brace_depth == 0)
+            {
+                if (t->type == T_COMMA)
+                    break;
+                else if (t->type == T_SEMICOLON)
+                    break;
+            }
             t = peek_token_in_stmt(stmt, ++dp->token_pos);
         }
         if (init_start_pos != dp->token_pos)
