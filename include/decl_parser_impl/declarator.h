@@ -11,7 +11,8 @@ typedef enum
     DRT_IDENT,    // 叶子：标识符
     DRT_POINTER,  // *
     DRT_ARRAY,    // []
-    DRT_FUNCTION, // ()
+    DRT_FUNCTION, // x()
+    DRT_GROUP,    // (x)
 } DeclaratorType;
 
 struct Declarator
@@ -38,6 +39,11 @@ struct Declarator
             Vector *params; // DeclParam*
             int is_variadic;
         } function;
+
+        struct
+        {
+            Declarator *inner;
+        } group;
     };
 };
 
@@ -45,6 +51,7 @@ Declarator *make_identifier_declarator(char *name);
 Declarator *make_pointer_declarator(Declarator *inner, unsigned qualifier);
 Declarator *make_array_declarator(Declarator *inner, DeclUnit *length);
 Declarator *make_function_declarator(Declarator *inner, Vector *params, int is_variadic);
+Declarator *make_group_declarator(Declarator *inner);
 
 void declarator_free(Declarator *decl);
 

@@ -170,7 +170,7 @@ Declarator *parse_direct_declarator(DeclParser *dp)
     else if (t->type == T_LEFT_PAREN)
     {
         dp->token_pos++;
-        decl = parse_declarator(dp);
+        decl = make_group_declarator(parse_declarator(dp));
         t = peek_token_in_stmt(stmt, dp->token_pos);
         if (!t || t->type != T_RIGHT_PAREN)
         {
@@ -333,6 +333,20 @@ Declarator *parse_function_suffix(DeclParser *dp, Declarator *decl)
     if (!t || t->type != T_RIGHT_PAREN)
         return NULL;
     dp->token_pos++;
+
+    if (decl->type != DRT_GROUP)
+        return make_function_declarator(decl, params, is_variadic);
+
+    Declarator *inner = decl->group.inner;
+
+    if (inner && inner->type == DRT_POINTER)
+    {
+        Declarator *func =
+            make_function_declarator(inner->pointer.inner, params, is_variadic);
+
+        inner->pointer.inner = func;
+        return decl; // GROUP 不变，内部结构已调整
+    }
 
     return make_function_declarator(decl, params, is_variadic);
 }

@@ -56,6 +56,17 @@ Declarator *make_function_declarator(Declarator *inner, Vector *params, int is_v
     return decl;
 }
 
+Declarator *make_group_declarator(Declarator *inner)
+{
+    Declarator *decl = malloc(sizeof(*decl));
+    decl->type = DRT_GROUP;
+
+    decl->name = str_clone(inner ? inner->name : NULL);
+    decl->function.inner = inner;
+
+    return decl;
+}
+
 void declarator_free(Declarator *decl)
 {
     if (!decl)
@@ -78,6 +89,9 @@ void declarator_free(Declarator *decl)
                 decl_param_free(*((DeclParam **)vector_get(decl->function.params, idx)));
             vector_free(decl->function.params);
         }
+        break;
+    case DRT_GROUP:
+        declarator_free(decl->group.inner);
         break;
     case DRT_IDENT:
     default:
@@ -184,5 +198,20 @@ void print_declarator_impl(Declarator *d, int indent)
             printf("Variadic: yes\n");
         }
         break;
+
+    case DRT_GROUP:
+        print_indent(indent);
+        printf("Declarator: GROUP\n");
+
+        print_indent(indent + 2);
+        printf("Inner:\n");
+
+        if (d->group.inner)
+            print_declarator_impl(d->group.inner, indent + 4);
+        else
+        {
+            print_indent(indent + 4);
+            printf("<none>\n");
+        }
     }
 }
