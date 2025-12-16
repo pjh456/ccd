@@ -3,6 +3,7 @@
 #include "decl_parser_impl/declarator.h"
 #include "decl_parser_impl/declarator_impl/decl_initializer.h"
 #include "decl_parser_impl/declarator_impl/decl_param.h"
+#include "decl_parser_impl/decl_specifier.h"
 #include "unit_scanner_impl/statement_unit.h"
 #include "decl_parser_impl/decl_unit.h"
 #include "tokenizer_impl/token.h"
@@ -84,12 +85,33 @@ Declarator *parse_declarator(DeclParser *dp)
         return NULL;
 
     Declarator *decl = NULL;
+
+    // perfix
     Token *t = peek_token_in_stmt(stmt, dp->token_pos);
     switch (t->type)
     {
     case T_STAR:
-        break;
+    {
+        t = peek_token_in_stmt(stmt, ++dp->token_pos);
+        unsigned qualifier = DTQ_NONE;
+        while (t)
+        {
+            if (t->type == T_CONST)
+                qualifier |= DTQ_CONST;
+            else if (t->type == T_VOLATILE)
+                qualifier |= DTQ_VOLATILE;
+            else if (t->type == T_RESTRICT)
+                qualifier |= DTQ_RESTRICT;
+            else
+                break;
+            t = peek_token_in_stmt(stmt, ++dp->token_pos);
+        }
+        Declarator *inner = parse_declarator(dp);
+        decl = make_pointer_declarator(inner, qualifier);
+    }
+    break;
     case T_LEFT_PAREN:
+        dp->token_pos++;
         decl = parse_declarator(dp);
         if (peek_token_in_stmt(stmt, dp->token_pos)->type != T_RIGHT_PAREN)
         {
@@ -103,13 +125,15 @@ Declarator *parse_declarator(DeclParser *dp)
     {
         char *str = str_n_clone(t->str, t->length);
         decl = make_identifier_declarator(str);
+        dp->token_pos++;
     }
     break;
     default:
         return NULL;
     }
 
-    t = peek_token_in_stmt(stmt, ++dp->token_pos);
+    // suffix
+    t = peek_token_in_stmt(stmt, dp->token_pos);
     while (t)
     {
         switch (t->type)
