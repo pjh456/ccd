@@ -14,7 +14,7 @@ Declarator *make_identifier_declarator(char *name)
     Declarator *decl = malloc(sizeof(*decl));
     decl->type = DRT_IDENT;
 
-    decl->ident.name = str_clone(name);
+    decl->name = str_clone(name);
 
     return decl;
 }
@@ -24,6 +24,7 @@ Declarator *make_pointer_declarator(Declarator *inner, unsigned qualifier)
     Declarator *decl = malloc(sizeof(*decl));
     decl->type = DRT_POINTER;
 
+    decl->name = str_clone(inner ? inner->name : NULL);
     decl->pointer.inner = inner;
     decl->pointer.qualifiers = qualifier;
 
@@ -35,6 +36,7 @@ Declarator *make_array_declarator(Declarator *inner, DeclUnit *length)
     Declarator *decl = malloc(sizeof(*decl));
     decl->type = DRT_ARRAY;
 
+    decl->name = str_clone(inner ? inner->name : NULL);
     decl->array.inner = inner;
     decl->array.length = length;
 
@@ -46,6 +48,7 @@ Declarator *make_function_declarator(Declarator *inner, Vector *params, int is_v
     Declarator *decl = malloc(sizeof(*decl));
     decl->type = DRT_FUNCTION;
 
+    decl->name = str_clone(inner ? inner->name : NULL);
     decl->function.inner = inner;
     decl->function.params = params;
     decl->function.is_variadic = is_variadic;
@@ -57,6 +60,8 @@ void declarator_free(Declarator *decl)
 {
     if (!decl)
         return;
+    if (decl->name)
+        free(decl->name);
     switch (decl->type)
     {
     case DRT_POINTER:
@@ -75,8 +80,6 @@ void declarator_free(Declarator *decl)
         }
         break;
     case DRT_IDENT:
-        if (decl->ident.name)
-            free(decl->ident.name);
     default:
         break;
     }
@@ -102,7 +105,7 @@ void print_declarator_impl(Declarator *d, int indent)
     case DRT_IDENT:
         print_indent(indent);
         printf("Declarator: IDENT \"%s\"\n",
-               d->ident.name ? d->ident.name : "<anonymous>");
+               d->name ? d->name : "<anonymous>");
         break;
 
     case DRT_POINTER:

@@ -17,13 +17,9 @@ typedef enum
 struct Declarator
 {
     DeclaratorType type;
+    char *name;
     union
     {
-        struct
-        {
-            char *name;
-        } ident;
-
         struct
         {
             Declarator *inner;
