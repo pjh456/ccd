@@ -181,13 +181,16 @@ Declarator *parse_declarator(DeclParser *dp)
             while (t && t->type != T_RIGHT_BRACKET)
                 t = peek_token_in_stmt(stmt, ++dp->token_pos);
 
+            dp->token_pos++;
+
             Declarator *outer = make_array_declarator(decl, NULL);
-            if (len_start_pos != dp->token_pos)
+
+            if (dp->token_pos - len_start_pos > 1)
                 outer->array.length = make_expression_decl_unit(
                     make_decl_or_expr_statement_unit(
                         vector_slice(
                             stmt->tokens,
-                            len_start_pos, dp->token_pos + 1)));
+                            len_start_pos, dp->token_pos)));
 
             return outer;
         }
