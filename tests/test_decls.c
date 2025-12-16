@@ -95,7 +95,7 @@ static void test_array_decl(void)
         make_decl_specifier(DBT_INT, DSUE_NONE, 0, 0, 0, 0);
 
     Declarator *id = make_identifier_declarator(strdup("arr"));
-    Declarator *arr = make_array_declarator(id, 10);
+    Declarator *arr = make_array_declarator(id, NULL);
 
     DeclInitializer *arr_init = wrap_decl(arr);
     Vector *decls = vec_new_ptr();
@@ -117,12 +117,12 @@ static void test_function_decl(void)
     DeclSpecifier *ps1 =
         make_decl_specifier(DBT_INT, DSUE_NONE, 0, 0, 0, 0);
     Declarator *pd1 = make_identifier_declarator(strdup("a"));
-    DeclParam *p1 = make_decl_param(strdup("a"), ps1, pd1);
+    DeclParam *p1 = make_decl_param(ps1, pd1);
 
     DeclSpecifier *ps2 =
         make_decl_specifier(DBT_FLOAT, DSUE_NONE, 0, 0, 0, 0);
     Declarator *pd2 = make_identifier_declarator(strdup("b"));
-    DeclParam *p2 = make_decl_param(strdup("b"), ps2, pd2);
+    DeclParam *p2 = make_decl_param(ps2, pd2);
 
     Vector *params = vec_new_ptr();
     vec_push(params, p1);

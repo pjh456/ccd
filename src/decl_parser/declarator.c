@@ -3,6 +3,7 @@
 #include "decl_parser_impl/declarator_impl/decl_param.h"
 #include "decl_parser_impl/decl_specifier.h"
 #include "decl_parser_impl/decl_specifier_impl/decl_specifier_impl.h"
+#include "decl_parser_impl/decl_unit.h"
 #include "vector.h"
 #include "utils.h"
 #include <stdlib.h>
@@ -29,7 +30,7 @@ Declarator *make_pointer_declarator(Declarator *inner, unsigned qualifier)
     return decl;
 }
 
-Declarator *make_array_declarator(Declarator *inner, size_t length)
+Declarator *make_array_declarator(Declarator *inner, DeclUnit *length)
 {
     Declarator *decl = malloc(sizeof(*decl));
     decl->type = DRT_ARRAY;
@@ -127,10 +128,10 @@ void print_declarator_impl(Declarator *d, int indent)
 
         print_indent(indent + 2);
         printf("Length: ");
-        if (d->array.length)
-            printf("%zu\n", d->array.length);
-        else
-            printf("<unspecified>\n");
+        // if (d->array.length)
+        //     printf("%zu\n", d->array.length);
+        // else
+        printf("<unspecified>\n");
 
         print_indent(indent + 2);
         printf("Element:\n");
@@ -162,7 +163,7 @@ void print_declarator_impl(Declarator *d, int indent)
                 print_indent(indent + 4);
                 printf("Param %zu: %s\n",
                        i,
-                       p->name ? p->name : "<anonymous>");
+                       /*p->name ? p->name :*/ "<anonymous>");
 
                 print_indent(indent + 6);
                 printf("Specifier:\n");
