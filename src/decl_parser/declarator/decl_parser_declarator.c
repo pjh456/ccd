@@ -45,7 +45,7 @@ DeclInitializer *parse_decl_initializer(DeclParser *dp)
 
     DeclInitializer *di = NULL;
     Token *t = peek_token_in_stmt(stmt, dp->token_pos);
-    if (t->type == T_EQUAL)
+    if (t && t->type == T_EQUAL)
     {
         t = peek_token_in_stmt(stmt, ++dp->token_pos);
         size_t init_start_pos = dp->token_pos;
@@ -101,6 +101,8 @@ Declarator *parse_declarator(DeclParser *dp)
 
     // perfix
     Token *t = peek_token_in_stmt(stmt, dp->token_pos);
+    if (!t)
+        return NULL;
     switch (t->type)
     {
     case T_STAR:
@@ -142,11 +144,13 @@ Declarator *parse_declarator(DeclParser *dp)
     }
     break;
     default:
-        return NULL;
+        break;
     }
 
     // suffix
     t = peek_token_in_stmt(stmt, dp->token_pos);
+    if (!t)
+        return NULL;
     while (t)
     {
         switch (t->type)

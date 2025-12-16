@@ -38,10 +38,14 @@ void decl_parser_free(DeclParser *dp)
 
 StatementUnit *peek_statement(DeclParser *dp)
 {
+    if (!dp || !dp->stmts || dp->stmt_pos >= dp->stmts->size)
+        return NULL;
     return *((StatementUnit **)vector_get(dp->stmts, dp->stmt_pos));
 }
 StatementUnit *next_statement(DeclParser *dp)
 {
+    if (!dp || !dp->stmts || dp->stmt_pos >= dp->stmts->size)
+        return NULL;
     dp->token_pos = 0;
     return *((StatementUnit **)vector_get(dp->stmts, dp->stmt_pos++));
 }
@@ -71,6 +75,20 @@ Vector *parse_file_decl(DeclParser *dp)
     }
 
     return units;
+}
+
+int is_in_typedef_table(char *name)
+{
+    if (!name)
+        return 0;
+    return 0;
+}
+
+int is_in_sue_table(char *name)
+{
+    if (!name)
+        return 0;
+    return 0;
 }
 
 int is_declaration_statement(StatementUnit *stmt)
