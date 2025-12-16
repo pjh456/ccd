@@ -21,12 +21,30 @@ Vector *parse_decl_initializer_list(DeclParser *dp)
         return NULL;
 
     Vector *list = vector_new(sizeof(DeclInitializer *));
+    Token *t = peek_token_in_stmt(stmt, dp->token_pos);
     while (1)
     {
         DeclInitializer *init = parse_decl_initializer(dp);
         if (!init)
             break;
         vector_push_back(list, &init);
+
+        t = peek_token_in_stmt(stmt, dp->token_pos);
+        if (!t)
+            break;
+
+        if (t->type == T_SEMICOLON)
+            break;
+        else if (t->type == T_COMMA)
+            dp->token_pos++;
+        else
+        {
+            for (size_t idx = 0; idx < list->size; ++idx)
+                decl_initializer_free(
+                    *((DeclInitializer **)vector_get(list, idx)));
+            vector_free(list);
+            return NULL;
+        }
     }
 
     return list;
@@ -150,7 +168,7 @@ Declarator *parse_declarator(DeclParser *dp)
     // suffix
     t = peek_token_in_stmt(stmt, dp->token_pos);
     if (!t)
-        return NULL;
+        return decl;
     while (t)
     {
         switch (t->type)
