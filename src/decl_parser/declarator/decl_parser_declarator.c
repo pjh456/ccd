@@ -238,8 +238,7 @@ DeclParam *parse_decl_param(DeclParser *dp)
 
     Declarator *decl = parse_declarator(dp);
 
-    DeclParam *param = NULL;
-    make_decl_param(spec, decl);
+    DeclParam *param = make_decl_param(spec, decl);
 
     return param;
 }
