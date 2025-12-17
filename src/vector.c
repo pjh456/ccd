@@ -188,5 +188,5 @@ int vector_remove(Vector *vec, size_t idx)
         (vec->size - idx - 1) * vec->ele_size);
     vec->size--;
 
-    return 0;
+    return 1;
 }
