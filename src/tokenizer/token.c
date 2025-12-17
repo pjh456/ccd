@@ -2,6 +2,7 @@
 #include "tokenizer.h"
 #include "utils.h"
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 
 const char *token_name(TokenType tt)
@@ -208,22 +209,26 @@ void print_token(const Token *t)
     printf(
         "%s (%.*s) at %d:%d\n",
         token_name(t->type),
-        (int)t->length, t->str,
+        (int)strlen(t->str), t->str,
         t->line, t->col);
 }
 
 Token *make_token(Tokenizer *tk, TokenType tt, const char *lit, size_t len)
 {
     Token *t = malloc(sizeof(*t));
+
     t->type = tt;
-    t->str = str_n_clone(lit, len);
-    t->length = len;
+    if (len)
+        t->str = str_n_clone(lit, len);
+    else
+        t->str = NULL;
+
     if (tk)
     {
-        // 记录生成该 Token 时的行号和列号
         t->line = tk->stus.line;
         t->col = tk->stus.col;
     }
+
     return t;
 }
 

@@ -43,7 +43,7 @@ char *str_clone(const char *str)
 
 char *str_n_clone(const char *str, size_t n)
 {
-    if (!str)
+    if (!str || !n)
         return NULL;
     char *p = malloc(n + 1);
     memcpy(p, str, n);

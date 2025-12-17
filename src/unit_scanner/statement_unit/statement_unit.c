@@ -148,7 +148,10 @@ void print_tokens(Vector *tokens)
 
         // 打印: TYPE(text)
         printf("%s(", token_name(t->type));
-        printf("%.*s", (int)t->length, t->str);
+        if (t->str)
+            printf("%.*s", (int)strlen(t->str), t->str);
+        else
+            printf("None");
         printf(") ");
     }
 }

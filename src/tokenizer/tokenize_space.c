@@ -83,10 +83,14 @@ Token *tokenize_preprocessor(Tokenizer *tk)
         advance(tk);
     }
 
-    t->length = tk->src + tk->pos - p;
-    t->str = str_n_clone(p, t->length);
-    while (t->length > 0 && is_space(*(t->str + t->length - 1)))
-        t->length--;
+    size_t length = tk->src + tk->pos - p;
+    while (length > 0 && is_space(*(p + length - 1)))
+        length--;
+
+    if (length)
+        t->str = str_n_clone(p, length);
+    else
+        t->str = NULL;
 
     return t;
 }

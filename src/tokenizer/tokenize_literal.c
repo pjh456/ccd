@@ -79,7 +79,6 @@ Token *tokenize_keyword(Tokenizer *tk)
             {
                 t->type = e->type;
                 t->str = str_n_clone(p, len);
-                t->length = len;
 
                 // 更新位置
                 tk->pos += len;
@@ -95,8 +94,8 @@ Token *tokenize_keyword(Tokenizer *tk)
         advance(tk);
 
     t->type = T_IDENTIFIER;
-    t->length = tk->src + tk->pos - p; // 计算长度
-    t->str = str_n_clone(p, t->length);
+    size_t length = tk->src + tk->pos - p; // 计算长度
+    t->str = str_n_clone(p, length);
 
     return t;
 }
@@ -117,8 +116,8 @@ Token *tokenize_number(Tokenizer *tk)
             advance(tk);
     }
 
-    t->length = tk->src + tk->pos - p;
-    t->str = str_n_clone(p, t->length);
+    size_t length = tk->src + tk->pos - p;
+    t->str = str_n_clone(p, length);
 
     return t;
 }
@@ -149,8 +148,8 @@ Token *tokenize_char(Tokenizer *tk)
     }
     advance(tk); // 消耗闭合的 '
 
-    t->length = tk->src + tk->pos - p;
-    t->str = str_n_clone(p, t->length);
+    size_t length = tk->src + tk->pos - p;
+    t->str = str_n_clone(p, length);
 
     return t;
 }
@@ -182,8 +181,8 @@ Token *tokenize_string(Tokenizer *tk)
     }
     advance(tk); // 消耗闭合的 "
 
-    t->length = tk->src + tk->pos - p;
-    t->str = str_n_clone(p, t->length);
+    size_t length = tk->src + tk->pos - p;
+    t->str = str_n_clone(p, length);
 
     return t;
 }

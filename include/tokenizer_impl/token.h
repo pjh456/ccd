@@ -135,10 +135,9 @@ typedef enum
 struct Token
 {
     TokenType type; // 类别
-    char *str;
-    size_t length; // Token 的长度
-    int line;      // 所在的行号
-    int col;       // 所在的列号
+    char *str;      // Token 原始字符串
+    int line;       // 所在的行号
+    int col;        // 所在的列号
 };
 
 // 获取 Token 类型的字符串名称 (用于调试打印)

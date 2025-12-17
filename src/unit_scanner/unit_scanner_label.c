@@ -21,7 +21,7 @@ StatementUnit *scan_label(UnitScanner *us)
 
     StatementUnit *unit = make_label_statement_unit(
         vector_slice(us->tokens, pos, us->pos),
-        str_n_clone(t->str, t->length));
+        str_clone(t->str));
 
     return unit;
 }
@@ -46,7 +46,7 @@ StatementUnit *scan_goto(UnitScanner *us)
 
     StatementUnit *unit = make_goto_statement_unit(
         vector_slice(us->tokens, pos, us->pos),
-        str_n_clone(t->str, t->length));
+        str_clone(t->str));
 
     return unit;
 }

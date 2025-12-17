@@ -116,7 +116,6 @@ Token *tokenize_operator(Tokenizer *tk)
         // 找到了最长匹配
         t->type = best->type;
         t->str = str_n_clone(p, best_len);
-        t->length = best_len;
 
         // 更新 Tokenizer 状态
         tk->pos += best_len;

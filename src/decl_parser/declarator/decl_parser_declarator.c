@@ -162,7 +162,7 @@ Declarator *parse_direct_declarator(DeclParser *dp)
 
     if (t->type == T_IDENTIFIER)
     {
-        char *str = str_n_clone(t->str, t->length);
+        char *str = str_clone(t->str);
         decl = make_identifier_declarator(str);
         free(str);
         dp->token_pos++;

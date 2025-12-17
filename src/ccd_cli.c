@@ -88,7 +88,7 @@ void dump_tokens(Vector *tokens)
 
         printf("%4d:%-4d  %-12s  \"",
                t->line, t->col, token_name(t->type));
-        fwrite(t->str, 1, t->length, stdout);
+        fwrite(t->str, 1, strlen(t->str), stdout);
         printf("\"\n");
 
         if (t->type == T_EOF)
