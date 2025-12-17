@@ -156,7 +156,7 @@ int vector_insert(Vector *vec, size_t idx, void *elem)
     if (vec->size == vec->capacity)
     {
         size_t new_cap = vec->capacity ? vec->capacity * 2 : 4;
-        if (vector_reserve(vec, new_cap) != 0)
+        if (!vector_reserve(vec, new_cap))
             return 0;
     }
 
