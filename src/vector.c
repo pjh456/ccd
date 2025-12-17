@@ -141,7 +141,12 @@ void *vector_front(Vector *vec) { return vector_get(vec, 0); }
  * @brief 获取尾部的元素
  * @return void* 指向元素的指针，越界返回 NULL
  */
-void *vector_back(Vector *vec) { return vector_get(vec, vec->size - 1); }
+void *vector_back(Vector *vec)
+{
+    if (!vec || vec->size == 0)
+        return NULL;
+    return vector_get(vec, vec->size - 1);
+}
 
 /**
  * @brief 向指定位置插入元素
