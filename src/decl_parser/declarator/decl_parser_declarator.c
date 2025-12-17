@@ -308,7 +308,7 @@ Declarator *parse_function_suffix(DeclParser *dp, Declarator *decl)
             if (t->type == T_ELLIPSIS)
             {
                 is_variadic = 1;
-                dp->token_pos++;
+                t = peek_token_in_stmt(stmt, ++dp->token_pos);
                 break;
             }
 
