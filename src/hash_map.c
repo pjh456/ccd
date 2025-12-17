@@ -23,7 +23,7 @@ HashMap *make_hash_map(size_t count)
 
     map->hashs = vector_new(sizeof(HashEntry *));
     vector_resize(map->hashs, count);
-    memset(map->hashs->data, 0, count * sizeof(HashEntry *));
+    // memset(map->hashs->data, 0, count * sizeof(HashEntry *));
 
     return map;
 }
