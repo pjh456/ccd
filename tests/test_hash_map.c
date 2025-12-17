@@ -91,13 +91,9 @@ static void test_duplicate_key(void)
     assert(e != NULL);
     assert(strcmp(e->key, "dup") == 0);
 
-    /* 两种行为都允许，但至少要一致 */
     assert(
         e->value == &v1 ||
         e->value == &v2);
-
-    /* 若你设计为覆盖，推荐加上这个断言 */
-    /* assert(e->value == &v2); */
 
     hash_map_free(map);
     printf("  OK\n");
@@ -121,9 +117,6 @@ static void test_empty_key(void)
     printf("  OK\n");
 }
 
-/* 如果你允许 NULL key，这个测试应该通过
- * 否则你应该在 insert/find 里 assert(key != NULL)
- */
 static void test_null_key_behavior(void)
 {
     printf("[TEST] NULL key behavior...\n");
