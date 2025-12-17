@@ -161,6 +161,4 @@ Token *make_token(Tokenizer *tk, TokenType tt, const char *lit, size_t len) {
 
 理论课结束，开始写代码！
 
-我们已经有了 `token.h` (枚举定义) 和 `token.c` (辅助函数)。
-
-下一章 **[09. 定义 Tokenizer 与 状态机框架](09_tokenizer_struct.md)**，我们将正式定义 `Tokenizer` 结构体，并实现它的初始化与核心扫描循环 `next_token()`。我们将看到 `switch-case` 如何像魔法一样处理 FSM 的状态跳转。
+我们之前虽然定义了 `Token`，但还不够完善。下一章 **[09. 定义 Token 类型](09_enum_token_type.md)**，我们将扩充 `token.h`，利用枚举（Enum）列出 C 语言中所有的关键字 (`int`, `return`, `if`...) 和符号，并正式定义 `Tokenizer` 结构体。
