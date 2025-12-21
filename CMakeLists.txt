@@ -15,7 +15,7 @@ target_link_libraries(ccd_cli ccd)
 enable_testing()
 add_subdirectory(tests)
 
-file(GLOB_RECURSE CCD_SELF_FILES
+file(GLOB_RECURSE CCD_SELF_FILES CONFIGURE_DEPENDS
     ${PROJECT_SOURCE_DIR}/include/*.h
     ${PROJECT_SOURCE_DIR}/src/*.c
 )
