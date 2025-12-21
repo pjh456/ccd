@@ -84,7 +84,7 @@ int vector_resize(Vector *vec, size_t new_size)
 int vector_push_back(Vector *vec, void *elem)
 {
     if (!vec)
-        return NULL;
+        return 0;
 
     if (vec->size == vec->capacity)
     {
@@ -104,7 +104,7 @@ int vector_pop_back(Vector *vec)
 {
     if (!vec || vec->size == 0)
         return 0;
-    free(vector_back(vec));
+    // free(vector_back(vec)); // free() 只能释放首地址的内存
     vec->size--;
     return 1;
 }
