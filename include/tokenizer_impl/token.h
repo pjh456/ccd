@@ -89,7 +89,7 @@ typedef enum
     T_INLINE,   // inline
     T_REGISTER, // register
     T_RESTRICT, // restrict
-    T_VOLATILE, // volalite
+    T_VOLATILE, // volatile
     T_CONST,    // const
 
     T_AUTO,     // auto
