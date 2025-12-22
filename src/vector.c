@@ -104,7 +104,6 @@ int vector_pop_back(Vector *vec)
 {
     if (!vec || vec->size == 0)
         return 0;
-    free(vector_back(vec));
     vec->size--;
     return 1;
 }
